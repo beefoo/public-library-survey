@@ -1,0 +1,18 @@
+{
+  "name": "public-library-survey",
+  "description": "Visualizing and analyzing IMLS public library survey data",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0",
+    "eslint": "^9.17.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.31.0",
+    "prettier": "^3.4.2",
+    "tslib": "^2.8.1"
+  }
+}
