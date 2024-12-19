@@ -1,33 +1,37 @@
 <!doctype html>
 <html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Public Library Survey Explorer</title>
+    <link rel="stylesheet" href="css/vendor/normalize.css" />
+    <link rel="stylesheet" href="css/vendor/leaflet.css" />
+    <link rel="stylesheet" href="css/main.css" />
+    <meta
+      name="description"
+      content="Visualizing and analyzing IMLS public library survey data"
+    />
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Public Library Survey Explorer</title>
-  <link rel="stylesheet" href="css/normalize.css">
-  <link rel="stylesheet" href="css/main.css">
-  <meta name="description" content="Visualizing and analyzing IMLS public library survey data">
-</head>
-
-<body>
-  <div class="main">
-    <div class="panel">
-      <div class="panel-menu">
-        <button>Results</button>
-        <button>Filters</button>
-        <button>Colors</button>
+  <body>
+    <div class="main">
+      <div class="panel">
+        <div class="panel-menu">
+          <button>Results</button>
+          <button>Filters</button>
+          <button>Colors</button>
+        </div>
+        <div class="panel-tabs">
+          <div class="panel-results panel-tab"></div>
+          <div class="panel-filters panel-tab"></div>
+          <div class="panel-colors panel-tab"></div>
+        </div>
       </div>
-      <div class="panel-tabs">
-        <div class="panel-results panel-tab"></div>
-        <div class="panel-filters panel-tab"></div>
-        <div class="panel-colors panel-tab"></div>
+      <div class="viewer">
+        <div id="map" class="map"></div>
+        <div id="key" class="key"></div>
       </div>
     </div>
-    <div class="map"></div>
-  </div>
-  <script src="js/main.js" type="module"></script>
-
-</body>
-
+    <script src="js/main.js" type="module"></script>
+  </body>
 </html>
