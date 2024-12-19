@@ -184,6 +184,9 @@ def main():
     lib_df = lib_df.filter(old_columns, axis=1)
     lib_df = lib_df.rename(columns=columns)
 
+    # Fill NaN
+    lib_df = lib_df.fillna(-1)
+
     # Convert to rows
     records = lib_df.to_dict("records")
     rows = []
