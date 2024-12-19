@@ -20,11 +20,31 @@ export default class Map {
   }
 
   init() {
+    this.colorOptions = [];
+    this.data = [];
     this.loadMap();
+  }
+
+  loadColorOptions(options) {
+    const parent = document.getElementById('tab-colors');
+    let html = '';
+    options.forEach((opt, i) => {
+      const checked = i === 0 ? ' checked' : '';
+      html += `<label class="radio-label" for="color-${opt.field}">`;
+      html += `  <input type="radio" id="color-${opt.field}" name="color-by" value="${opt.field}" ${checked} />`;
+      html += `  ${opt.label}`;
+      html += '</label>';
+    });
+    parent.innerHTML = html;
+    this.colorOptions = options;
+    this.colorInputs = document.querySelectorAll('input[name="color-by"]');
   }
 
   loadListeners() {
     this.map.on('zoomend', (event) => this.onZoom(event));
+    this.colorInputs.forEach((input) => {
+      input.onchange = (event) => this.onColorChange(event);
+    });
   }
 
   loadMap() {
@@ -41,22 +61,27 @@ export default class Map {
     this.map = map;
   }
 
-  loadMarkers(markers) {
-    const { options } = this;
+  loadMarkers() {
+    const { data, options } = this;
     const markerGroup = new L.LayerGroup();
-    this.markers = markers.map((marker) => {
-      const el = L.circleMarker([marker.lat, marker.lon], {
+    this.markers = data.map((item) => {
+      const marker = L.circleMarker([item.lat, item.lon], {
         fillOpacity: options.markerOpacity[0],
         radius: options.markerRadius[0],
         stroke: false,
       }).addTo(markerGroup);
       return {
-        id: marker.id,
-        el,
+        id: item.id,
+        el: marker,
       };
     });
     markerGroup.addTo(this.map);
-    this.loadListeners();
+  }
+
+  onColorChange(event) {
+    const input = event.currentTarget;
+    const { value } = input;
+    console.log(value);
   }
 
   onZoom(_event) {
@@ -69,5 +94,9 @@ export default class Map {
       marker.el.setRadius(radius);
       marker.el.setStyle({ fillOpacity: opacity });
     });
+  }
+
+  setData(data) {
+    this.data = data;
   }
 }

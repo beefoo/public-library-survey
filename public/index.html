@@ -17,14 +17,24 @@
     <div class="main">
       <div class="panel">
         <div class="panel-menu">
-          <button>Results</button>
-          <button>Filters</button>
-          <button>Colors</button>
+          <button
+            id="button-results"
+            class="tab-button active"
+            data-tab="tab-results"
+          >
+            Results
+          </button>
+          <button id="button-filters" class="tab-button" data-tab="tab-filters">
+            Filter by
+          </button>
+          <button id="button-colors" class="tab-button" data-tab="tab-colors">
+            Color by
+          </button>
         </div>
         <div class="panel-tabs">
-          <div class="panel-results panel-tab"></div>
-          <div class="panel-filters panel-tab"></div>
-          <div class="panel-colors panel-tab"></div>
+          <div id="tab-results" class="panel-tab active"></div>
+          <div id="tab-filters" class="panel-tab"></div>
+          <div id="tab-colors" class="panel-tab"></div>
         </div>
       </div>
       <div class="viewer">

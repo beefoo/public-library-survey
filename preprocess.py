@@ -88,7 +88,7 @@ def main():
     )
     race_df["PERC_WHITE"] = race_df.apply(
         lambda row: (
-            round(row["B02001_002E"] / row["RACES_TOTAL"], 3)
+            round(row["B02001_002E"] / row["RACES_TOTAL"] * 100, 2)
             if row["RACES_TOTAL"] > 0
             else 0
         ),
@@ -104,8 +104,9 @@ def main():
                     + row["B02001_006E"]
                     + row["B02001_007E"]
                 )
-                / row["RACES_TOTAL"],
-                3,
+                / row["RACES_TOTAL"]
+                * 100,
+                2,
             )
             if row["RACES_TOTAL"] > 0
             else 0
@@ -116,7 +117,9 @@ def main():
     # Calculate percentage hispanic
     ethnicity_df["PERC_HISPANIC"] = ethnicity_df.apply(
         lambda row: (
-            round(row["B03003_003E"] / (row["B03003_002E"] + row["B03003_003E"]), 3)
+            round(
+                row["B03003_003E"] / (row["B03003_002E"] + row["B03003_003E"]) * 100, 2
+            )
             if (row["B03003_002E"] + row["B03003_003E"]) > 0
             else 0
         ),
