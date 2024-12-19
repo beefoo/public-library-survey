@@ -2,12 +2,12 @@ body {
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-size: 18px;
   background-color: #111;
-  color: white;
+  color: black;
   overflow: hidden;
 }
 
 a {
-  color: #ffa86e;
+  color: #821e00;
   text-decoration: none;
 }
 a:hover {
@@ -31,12 +31,46 @@ a:hover {
   flex-basis: 400px;
   flex-direction: column;
   align-items: stretch;
+  border-right: 2px solid black;
+  box-sizing: border-box;
 }
 .panel-menu {
   display: flex;
+  padding-top: 6px;
+}
+button.tab-button {
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 6px 6px 0 0;
+  margin-left: 3px;
+  padding: 3px 12px;
+  cursor: pointer;
+}
+button.tab-button.active,
+button.tab-button:hover {
+  color: black;
+  background: #ddd;
 }
 .panel-tabs {
   flex-grow: 1;
+  background: #ddd;
+  overflow: hidden;
+  overflow-y: auto;
+}
+.panel-tab {
+  width: 100%;
+  padding: 12px;
+  display: none;
+}
+.panel-tab.active {
+  display: block;
+}
+
+.radio-label {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  display: block;
 }
 
 .viewer {
