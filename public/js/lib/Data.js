@@ -49,6 +49,7 @@ export default class Data {
     const rows = this.constructor.parseTable(table);
     this.items = this.constructor.parseItems(rows);
     this.results = this.items.slice();
+    this.totalPopulation = Helper.sum(this.items, 'pop_lsa');
     this.renderResults();
   }
 
@@ -201,20 +202,28 @@ export default class Data {
 
   renderResults() {
     const { maxResults } = this.options;
-    let { results, $results, filters } = this;
+    let { results, $results, filters, totalPopulation } = this;
     const count = results.length;
     const population = Helper.sum(results, 'pop_lsa');
+    const popPercent = (population / totalPopulation) * 100;
     if (count > maxResults) results = results.slice(0, maxResults);
+    const popPecentString =
+      popPercent < 100 ? ` (${popPercent.toFixed(2)}% of total served)` : '';
     let html = '';
-    html += `<p>Found <strong>${count.toLocaleString()}</strong> libraries serving <strong>${population.toLocaleString()}</strong> people`;
+    html += `<p>Found <strong>${count.toLocaleString()}</strong> libraries serving <strong>${population.toLocaleString()}${popPecentString}</strong> people`;
     if (Object.keys(filters).length > 0) {
       html += ' with filters: ';
       let filterStrings = [];
       for (const [field, value] of Object.entries(filters)) {
         const fieldLookup = field.replace('filter-', '');
         const filter = Helper.where(Config.filterBy, 'field', fieldLookup);
+        let label = value;
+        if (filter.type === 'value') {
+          const v = Helper.where(filter.values, 'value', value);
+          label = v.label;
+        }
         filterStrings.push(
-          `<span class="filter-label">${filter.label} = "${value}"</span>`,
+          `<span class="filter-label">${filter.label} = "${label}"</span>`,
         );
       }
       html += filterStrings.join(', ');
