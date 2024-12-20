@@ -1,3 +1,5 @@
+import Helper from './Helper.js';
+
 export default class Gradient {
   constructor(options = {}) {
     const defaults = {
@@ -254,5 +256,19 @@ export default class Gradient {
     const { qualPalette, quantPalette } = this.options;
     this.qualLen = qualPalette.length;
     this.quantLen = quantPalette.length;
+  }
+
+  colorFromQual(value, values) {
+    const index = values.indexOf(value);
+    if (index >= 0 && index < this.quantLen)
+      return this.options.quantPalette[index];
+    else return this.options.quantPalette[this.quantLen - 1];
+  }
+
+  colorFromQuant(value, minValue, maxValue, reverse = false) {
+    let n = Helper.clamp(Helper.norm(value, minValue, maxValue));
+    if (reverse) n = 1.0 - n;
+    const index = Math.round((this.quantLen - 1) * n);
+    return this.options.quantPalette[index];
   }
 }
