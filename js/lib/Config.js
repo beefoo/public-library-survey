@@ -3,6 +3,7 @@ const Config = {
     {
       label: 'Locale type',
       field: 'locale_type',
+      type: 'value',
       values: [
         { value: 11, label: 'Large city' },
         { value: 12, label: 'Mid-size city' },
@@ -16,6 +17,34 @@ const Config = {
         { value: 41, label: 'Rural' },
         { value: 42, label: 'Distant rural' },
         { value: 43, label: 'Remote rural' },
+      ],
+    },
+    {
+      label: 'Operating budget',
+      field: 'op_revenue',
+      type: 'range',
+      values: [
+        { minValue: 30000000, label: '$30M+' },
+        { minValue: 10000000, maxValue: 30000000, label: '$10M - $30M' },
+        { minValue: 5000000, maxValue: 10000000, label: '$5M - $10M' },
+        { minValue: 1000000, maxValue: 5000000, label: '$1M - $5M' },
+        { minValue: 400000, maxValue: 1000000, label: '$400K - $1M' },
+        { minValue: 200000, maxValue: 400000, label: '$200K - $400K' },
+        { minValue: 100000, maxValue: 200000, label: '$100K - $200K' },
+        { minValue: 50000, maxValue: 100000, label: '$50K - $100K' },
+        { minValue: 0, maxValue: 50000, label: 'Below $50K' },
+      ],
+    },
+    {
+      label: 'Median household income (Census tract)',
+      field: 'income',
+      type: 'perc_range',
+      values: [
+        { minValue: 80, label: 'Upper 10%' },
+        { minValue: 60, maxValue: 80, label: 'Upper-middle 20%' },
+        { minValue: 40, maxValue: 60, label: 'Middle 20%' },
+        { minValue: 20, maxValue: 40, label: 'Lower-middle 20%' },
+        { minValue: 0, maxValue: 20, label: 'Lower 10%' },
       ],
     },
   ],

@@ -15,6 +15,7 @@ export default class Map {
       minZoom: 4,
       maxZoom: 18,
       startZoom: 4, // see the whole country
+      strokeColor: '#00db42',
       tileUrlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     };
     this.options = Object.assign(defaults, options);
@@ -33,8 +34,33 @@ export default class Map {
     this.loadMap();
   }
 
+  filter(indices) {
+    const { opacity, radius } = this.getMarkerProperties();
+    this.markers.forEach((marker, i) => {
+      const isVisible = indices.includes(i);
+      this.markers[i].visible = isVisible;
+      if (isVisible) marker.el.setStyle({ fillOpacity: opacity });
+      else marker.el.setStyle({ fillOpacity: 0 });
+    });
+  }
+
   getCurrentColorOption() {
     return document.querySelector('input[name="color-by"]:checked').value;
+  }
+
+  getMarkerProperties() {
+    const { minZoom, maxZoom, markerOpacity, markerRadius } = this.options;
+    const zoom = this.map.getZoom();
+    const nzoom = Helper.norm(zoom, minZoom, maxZoom);
+    const opacity = Helper.lerp(markerOpacity[0], markerOpacity[1], nzoom);
+    const radius = Helper.lerp(markerRadius[0], markerRadius[1], nzoom);
+    return { opacity, radius };
+  }
+
+  jumpToMarker(markerIndex) {
+    const item = this.data[markerIndex];
+    const zoom = Math.max(this.map.getZoom(), 10);
+    this.map.flyTo([item.lat, item.lon], zoom);
   }
 
   loadColorOptions(options) {
@@ -49,8 +75,8 @@ export default class Map {
             value = value >= 0 ? Math.pow(value, opt.pow) : value;
           return value;
         });
-        const maxValue = Math.max.apply(Math, values);
-        const minValue = Math.min.apply(Math, values);
+        const maxValue = Helper.maxList(values);
+        const minValue = Helper.minList(values);
         this.markers.forEach((_marker, index) => {
           const value = values[index];
           if ('minValue' in opt && value < opt.minValue) {
@@ -121,12 +147,14 @@ export default class Map {
         fillOpacity: options.markerOpacity[0],
         radius: options.markerRadius[0],
         stroke: false,
+        color: options.strokeColor,
       });
       marker.on('mouseover', (_event) => this.onMarkerOver(index));
       marker.on('click', (_event) => this.onMarkerClick(index));
       marker.addTo(markerGroup);
       return {
         colors: {},
+        visible: true,
         el: marker,
       };
     });
@@ -146,8 +174,13 @@ export default class Map {
       markerIndex === this.selectedMarkerIndex
     ) {
       $meta.classList.remove('selected');
+      if (this.selectedMarkerIndex >= 0)
+        this.markers[this.selectedMarkerIndex].el.setStyle({ stroke: false });
       return;
     }
+    if (this.selectedMarkerIndex >= 0)
+      this.markers[this.selectedMarkerIndex].el.setStyle({ stroke: false });
+    this.markers[markerIndex].el.setStyle({ stroke: true }).bringToFront();
     this.selectedMarkerIndex = markerIndex;
     const item = this.data[markerIndex];
     const localeTypeFilter = Helper.where(
@@ -197,14 +230,11 @@ export default class Map {
   }
 
   onZoom(_event) {
-    const { minZoom, maxZoom, markerOpacity, markerRadius } = this.options;
-    const zoom = this.map.getZoom();
-    const nzoom = Helper.norm(zoom, minZoom, maxZoom);
-    const opacity = Helper.lerp(markerOpacity[0], markerOpacity[1], nzoom);
-    const radius = Helper.lerp(markerRadius[0], markerRadius[1], nzoom);
+    const { opacity, radius } = this.getMarkerProperties();
     this.markers.forEach((marker) => {
       marker.el.setRadius(radius);
-      marker.el.setStyle({ fillOpacity: opacity });
+      if (marker.visible) marker.el.setStyle({ fillOpacity: opacity });
+      else marker.el.setStyle({ fillOpacity: 0 });
     });
   }
 
