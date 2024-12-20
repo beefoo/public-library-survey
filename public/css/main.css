@@ -74,6 +74,13 @@ button.tab-button:hover {
 #tab-results p {
   padding: 0 6px;
 }
+.filter-label {
+  display: inline-block;
+  background: #333;
+  color: white;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
 .result-list {
   list-style-type: none;
   margin: 0;
@@ -106,6 +113,19 @@ button.tab-button:hover {
   font-size: 1.4rem;
   margin-bottom: 1rem;
   display: block;
+}
+
+#tab-filters label,
+#tab-filters select {
+  font-size: 1.4rem;
+  display: block;
+}
+#tab-filters label {
+  font-weight: bold;
+}
+#tab-filters select {
+  margin-bottom: 1rem;
+  width: 100%;
 }
 
 .viewer {
