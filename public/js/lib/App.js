@@ -16,8 +16,10 @@ export default class App {
     this.panel = new Panel();
     await this.data.load();
     this.map.setData(this.data.items);
-    this.map.loadColorOptions(Config.colorBy);
     this.map.loadMarkers();
+    this.map.loadColorOptions(Config.colorBy);
+    const colorOption = this.map.getCurrentColorOption();
+    this.map.updateColors(colorOption);
     this.map.loadListeners();
   }
 }

@@ -173,6 +173,7 @@ def main():
         "PERC_WHITE": "perc_white",
         "PERC_POC": "perc_poc",
         "PERC_HISPANIC": "perc_hispanic",
+        "GEO_URL": "geo_url",
         # "B02001_001E": "population",
         # "B02001_002E": "pop_white",
         # "B02001_003E": "pop_black",

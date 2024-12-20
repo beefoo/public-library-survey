@@ -75,6 +75,10 @@ export default class Helper {
     );
   }
 
+  static where(arr, key, value) {
+    return arr.find((item) => (key in item ? item[key] === value : false));
+  }
+
   static within(num, min, max) {
     return num >= min && num <= max;
   }

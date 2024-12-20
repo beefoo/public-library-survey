@@ -25,6 +25,7 @@ const Config = {
       field: 'pop_lsa',
       type: 'quant',
       minValue: 0,
+      pow: 0.33,
     },
     {
       label: 'Operating Revenue',
@@ -32,18 +33,21 @@ const Config = {
       type: 'quant',
       minValue: 0,
       prepend: '$',
+      pow: 0.3,
     },
     {
       label: 'Onsite program attendance',
       field: 'onsite_program_attendance',
       type: 'quant',
       minValue: 0,
+      pow: 0.33,
     },
     {
       label: 'Wireless sessions',
       field: 'wireless_sessions',
       type: 'quant',
       minValue: 0,
+      pow: 0.25,
     },
     {
       label: 'Median Household Income <small><em>(Census Tract)</em></small>',
