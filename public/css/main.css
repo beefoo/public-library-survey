@@ -62,9 +62,44 @@ button.tab-button:hover {
   width: 100%;
   padding: 12px;
   display: none;
+  box-sizing: border-box;
 }
 .panel-tab.active {
   display: block;
+}
+
+#tab-results {
+  padding: 6px 0;
+}
+#tab-results p {
+  padding: 0 6px;
+}
+.result-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.result-list li {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+  border-bottom: 1px solid black;
+}
+.result-button {
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.result-button:hover,
+.result-button.selected,
+.result-button:focus-visible {
+  background: #333;
+  color: white;
 }
 
 .radio-label {

@@ -2,6 +2,7 @@
   "name": "public-library-survey",
   "description": "Visualizing and analyzing IMLS public library survey data",
   "scripts": {
+    "publish": "git subtree push --prefix public origin gh-pages",
     "start": "node server.js"
   },
   "dependencies": {
