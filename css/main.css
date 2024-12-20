@@ -80,6 +80,7 @@ button.tab-button:hover {
   color: white;
   padding: 1px 4px;
   border-radius: 2px;
+  margin-bottom: 2px;
 }
 .result-list {
   list-style-type: none;
