@@ -50,6 +50,16 @@ export default class Data {
     this.options.onChangeState();
   }
 
+  getResultMessage() {
+    const { results, totalPopulation } = this;
+    const count = results.length;
+    const population = Helper.sum(results, 'pop_lsa');
+    const popPercent = (population / totalPopulation) * 100;
+    const popPecentString =
+      popPercent < 100 ? ` (${popPercent.toFixed(2)}% of total served)` : '';
+    return `Found <strong>${count.toLocaleString()}</strong> libraries serving <strong>${population.toLocaleString()}${popPecentString}</strong> people`;
+  }
+
   getResults() {
     return this.results.map((result) => result.originalIndex);
   }
@@ -194,6 +204,7 @@ export default class Data {
 
     // render the results
     let html = '';
+    html += `<p>${this.getResultMessage()}</p>`;
     filtersWithCounts.forEach((filter) => {
       const { label, field, type, values } = filter;
       const fieldName = type === 'value' ? field : `filter-${field}`;
@@ -218,15 +229,11 @@ export default class Data {
 
   renderResults() {
     const { maxResults } = this.options;
-    let { results, $results, filters, totalPopulation } = this;
+    let { results, $results, filters } = this;
     const count = results.length;
-    const population = Helper.sum(results, 'pop_lsa');
-    const popPercent = (population / totalPopulation) * 100;
     if (count > maxResults) results = results.slice(0, maxResults);
-    const popPecentString =
-      popPercent < 100 ? ` (${popPercent.toFixed(2)}% of total served)` : '';
     let html = '';
-    html += `<p>Found <strong>${count.toLocaleString()}</strong> libraries serving <strong>${population.toLocaleString()}${popPecentString}</strong> people`;
+    html += `<p>${this.getResultMessage()}`;
     if (Object.keys(filters).length > 0) {
       html += ' with filters: ';
       let filterStrings = [];
