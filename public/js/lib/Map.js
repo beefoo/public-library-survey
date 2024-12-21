@@ -5,33 +5,48 @@ import Helper from './Helper.js';
 
 export default class Map {
   constructor(options = {}) {
-    const defaults = {
+    this.init(options);
+  }
+
+  static defaults() {
+    return {
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      centerLatLon: [38.5767, -92.1736], // Jefferson City, MO as center
+      colorBy: 'pop_lsa',
       el: 'map',
+      lat: 38.5767,
+      lon: -92.1736, // Jefferson City, MO as center
       markerOpacity: [0.5, 0.9],
       markerRadius: [3, 30],
       minZoom: 4,
       maxZoom: 18,
-      startZoom: 4, // see the whole country
+      onChangeState: () => {},
+      select: -1,
       strokeColor: '#00db42',
       tileUrlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+      zoom: 4,
     };
-    this.options = Object.assign(defaults, options);
-    this.init();
   }
 
-  init() {
+  init(options) {
+    this.options = Object.assign(this.constructor.defaults(), options);
     this.colorOptions = [];
     this.data = [];
     this.markers = [];
-    this.selectedMarkerIndex = -1;
+    this.selectedMarkerIndex = parseInt(this.options.select);
+    this.colorBy = this.options.colorBy;
     this.gradient = new Gradient();
     this.$meta = document.getElementById('meta');
     this.$metaTitle = document.getElementById('meta-title');
     this.$metaDetails = document.getElementById('meta-details');
     this.loadMap();
+  }
+
+  deselectMarker() {
+    this.$meta.classList.remove('selected');
+    if (this.selectedMarkerIndex >= 0)
+      this.markers[this.selectedMarkerIndex].el.setStyle({ stroke: false });
+    this.selectedMarkerIndex = -1;
   }
 
   filter(indices) {
@@ -57,6 +72,17 @@ export default class Map {
     return { opacity, radius };
   }
 
+  getState() {
+    const latlon = this.map.getCenter();
+    return {
+      colorBy: this.colorBy,
+      lat: latlon.lat,
+      lon: latlon.lng,
+      select: this.selectedMarkerIndex,
+      zoom: this.map.getZoom(),
+    };
+  }
+
   jumpToMarker(markerIndex) {
     const item = this.data[markerIndex];
     const zoom = Math.max(this.map.getZoom(), 10);
@@ -65,7 +91,7 @@ export default class Map {
 
   loadColorOptions(options) {
     // pre-compute colors
-    const { gradient, data } = this;
+    const { colorBy, gradient, data } = this;
     options.forEach((opt) => {
       if (opt.type === 'quant') {
         const values = data.map((item) => {
@@ -105,7 +131,7 @@ export default class Map {
     const parent = document.getElementById('tab-colors');
     let html = '';
     options.forEach((opt, i) => {
-      const checked = i === 0 ? ' checked' : '';
+      const checked = opt.field === colorBy ? ' checked' : '';
       html += `<label class="radio-label" for="color-${opt.field}">`;
       html += `  <input type="radio" id="color-${opt.field}" name="color-by" value="${opt.field}" ${checked} />`;
       html += `  ${opt.label}`;
@@ -118,18 +144,20 @@ export default class Map {
 
   loadListeners() {
     this.map.on('zoomend', (event) => this.onZoom(event));
+    this.map.on('moveend', (event) => this.onMove(event));
     this.colorInputs.forEach((input) => {
       input.onchange = (event) => this.onColorChange(event);
     });
-    document.getElementById('close-details').onclick = (event) =>
-      this.$meta.classList.remove('selected');
+    document.getElementById('close-details').onclick = (event) => {
+      this.deselectMarker();
+    };
   }
 
   loadMap() {
     const { options } = this;
     const map = L.map(options.el).setView(
-      options.centerLatLon,
-      options.startZoom,
+      [parseFloat(options.lat), parseFloat(options.lon)],
+      parseInt(options.zoom),
     );
     L.tileLayer(options.tileUrlTemplate, {
       minZoom: options.minZoom,
@@ -159,6 +187,8 @@ export default class Map {
       };
     });
     markerGroup.addTo(this.map);
+    if (this.selectedMarkerIndex >= 0)
+      this.selectMarker(this.selectedMarkerIndex);
   }
 
   onColorChange(event) {
@@ -168,14 +198,39 @@ export default class Map {
   }
 
   onMarkerClick(markerIndex) {
+    this.selectMarker(markerIndex);
+    this.options.onChangeState();
+  }
+
+  onMarkerOver(markerIndex) {
+    const { $meta, $metaTitle } = this;
+    if ($meta.classList.contains('selected')) return;
+    const item = this.data[markerIndex];
+    $metaTitle.innerHTML = `${item.name} <small>(${item.city}, ${item.state})</small>`;
+    $meta.classList.add('active');
+  }
+
+  onMove(_event) {
+    this.options.onChangeState();
+  }
+
+  onZoom(_event) {
+    const { opacity, radius } = this.getMarkerProperties();
+    this.markers.forEach((marker) => {
+      marker.el.setRadius(radius);
+      if (marker.visible) marker.el.setStyle({ fillOpacity: opacity });
+      else marker.el.setStyle({ fillOpacity: 0 });
+    });
+    this.options.onChangeState();
+  }
+
+  selectMarker(markerIndex) {
     const { $meta, $metaTitle, $metaDetails } = this;
     if (
       $meta.classList.contains('selected') &&
       markerIndex === this.selectedMarkerIndex
     ) {
-      $meta.classList.remove('selected');
-      if (this.selectedMarkerIndex >= 0)
-        this.markers[this.selectedMarkerIndex].el.setStyle({ stroke: false });
+      this.deselectMarker();
       return;
     }
     if (this.selectedMarkerIndex >= 0)
@@ -221,23 +276,6 @@ export default class Map {
     $meta.classList.add('active', 'selected');
   }
 
-  onMarkerOver(markerIndex) {
-    const { $meta, $metaTitle } = this;
-    if ($meta.classList.contains('selected')) return;
-    const item = this.data[markerIndex];
-    $metaTitle.innerHTML = `${item.name} <small>(${item.city}, ${item.state})</small>`;
-    $meta.classList.add('active');
-  }
-
-  onZoom(_event) {
-    const { opacity, radius } = this.getMarkerProperties();
-    this.markers.forEach((marker) => {
-      marker.el.setRadius(radius);
-      if (marker.visible) marker.el.setStyle({ fillOpacity: opacity });
-      else marker.el.setStyle({ fillOpacity: 0 });
-    });
-  }
-
   setData(data) {
     this.data = data;
   }
@@ -254,5 +292,7 @@ export default class Map {
       const color = marker.colors[colorOptionKey];
       marker.el.setStyle({ fillColor: color });
     });
+    this.colorBy = colorOptionKey;
+    this.options.onChangeState();
   }
 }

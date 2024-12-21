@@ -49,6 +49,48 @@ export default class Helper {
     return String(num).padStart(size, padWith);
   }
 
+  static parseNumber(value) {
+    const string = `${value}`;
+    if (!isNaN(string) && !isNaN(parseFloat(string))) {
+      if (string.includes('.')) return parseFloat(string);
+      else return parseInt(string, 10);
+    }
+    return value;
+  }
+
+  static pushURLState(data, replace = false) {
+    if (window.history.pushState) {
+      const baseUrl = window.location.href.split('?')[0];
+      const currentState = window.history.state;
+      const searchParams = new URLSearchParams(data);
+      const urlEncoded = searchParams.toString();
+      const newUrl = `${baseUrl}?${urlEncoded}`;
+
+      // ignore if state is the same
+      if (currentState) {
+        const currentSearchParams = new URLSearchParams(currentState);
+        const currentEncoded = currentSearchParams.toString();
+        const currentUrl = `${baseUrl}?${currentEncoded}`;
+        if (newUrl === currentUrl) return;
+      }
+
+      window.historyInitiated = true;
+      if (replace === true) window.history.replaceState(data, '', newUrl);
+      else window.history.pushState(data, '', newUrl);
+    }
+  }
+
+  static queryParams() {
+    const searchString = window.location.search;
+    if (searchString.length <= 0) return {};
+    const searchParams = new URLSearchParams(searchString.substring(1));
+    const parsed = {};
+    for (const [key, value] of searchParams.entries()) {
+      parsed[key] = Helper.parseNumber(value);
+    }
+    return parsed;
+  }
+
   // range: (-PI, PI]
   // 3 o'clock is zero
   // clockwise goes to PI
@@ -77,6 +119,14 @@ export default class Helper {
 
   static where(arr, key, value) {
     return arr.find((item) => (key in item ? item[key] === value : false));
+  }
+
+  static whereObj(obj, condition) {
+    const filtered = {};
+    for (const [key, value] of Object.entries(obj)) {
+      if (condition(key, value)) filtered[key] = value;
+    }
+    return filtered;
   }
 
   static within(num, min, max) {

@@ -1,5 +1,6 @@
 import Config from './Config.js';
 import Data from './Data.js';
+import Helper from './Helper.js';
 import Map from './Map.js';
 import Panel from './Panel.js';
 
@@ -11,17 +12,26 @@ export default class App {
   }
 
   async init() {
-    this.map = new Map();
-    this.data = new Data({
+    const { mapState, dataState } = this.getStateFromURL();
+    const mapOptions = Object.assign(mapState, {
+      onChangeState: () => {
+        this.updateURL();
+      },
+    });
+    this.map = new Map(mapOptions);
+    const dataOptions = Object.assign(dataState, {
       onClickResult: (index) => {
-        this.map.onMarkerClick(index);
+        this.map.selectMarker(index);
         this.map.jumpToMarker(index);
       },
       onFilter: () => {
-        const indices = this.data.results.map((result) => result.originalIndex);
-        this.map.filter(indices);
+        this.map.filter(this.data.getResults());
+      },
+      onChangeState: () => {
+        this.updateURL();
       },
     });
+    this.data = new Data(dataOptions);
     this.panel = new Panel();
     await this.data.load();
     this.data.renderFacets();
@@ -30,7 +40,31 @@ export default class App {
     this.map.loadColorOptions(Config.colorBy);
     const colorOption = this.map.getCurrentColorOption();
     this.map.updateColors(colorOption);
+    this.map.filter(this.data.getResults());
     this.map.loadListeners();
     this.data.loadListeners();
+  }
+
+  getStateFromURL() {
+    const state = Helper.queryParams();
+    const mapDefaults = Map.defaults();
+    const mapKeys = Object.keys(mapDefaults);
+    const mapState = Helper.whereObj(state, (key, value) =>
+      mapKeys.includes(key),
+    );
+    const dataFilters = Helper.whereObj(
+      state,
+      (key, value) => !mapKeys.includes(key),
+    );
+    return {
+      mapState,
+      dataState: { filters: dataFilters },
+    };
+  }
+
+  updateURL() {
+    const dataState = this.data.getState();
+    const mapState = this.map.getState();
+    Helper.pushURLState(Object.assign({}, dataState, mapState));
   }
 }

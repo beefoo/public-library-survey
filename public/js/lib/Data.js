@@ -4,7 +4,9 @@ import Helper from './Helper.js';
 export default class Data {
   constructor(options = {}) {
     const defaults = {
+      filters: {},
       maxResults: 1000,
+      onChangeState: () => {},
       onClickResult: (index) => {},
       onFilter: () => {},
       src: 'data/2022-library-data.json',
@@ -15,9 +17,20 @@ export default class Data {
 
   init() {
     this.items = [];
-    this.filters = {};
+    this.filters = this.options.filters;
     this.$results = document.getElementById('tab-results');
     this.$filters = document.getElementById('tab-filters');
+  }
+
+  applyFilters() {
+    const { filters } = this;
+    this.results = this.items.filter((row) => {
+      let valid = true;
+      for (const [field, value] of Object.entries(filters)) {
+        if (!(field in row && row[field] === value)) valid = false;
+      }
+      return valid;
+    });
   }
 
   filterResults() {
@@ -29,17 +42,20 @@ export default class Data {
       if (/^\d+$/.test(value)) value = parseInt(value, 10);
       filters[$filter.getAttribute('data-field')] = value;
     });
-    this.results = this.items.filter((row, i) => {
-      let valid = true;
-      for (const [field, value] of Object.entries(filters)) {
-        if (!(field in row && row[field] === value)) valid = false;
-      }
-      return valid;
-    });
     this.filters = filters;
+    this.applyFilters();
     this.renderResults();
     this.renderFacets();
     this.options.onFilter();
+    this.options.onChangeState();
+  }
+
+  getResults() {
+    return this.results.map((result) => result.originalIndex);
+  }
+
+  getState() {
+    return Object.assign({}, this.filters);
   }
 
   async load() {
@@ -48,8 +64,8 @@ export default class Data {
     const table = await response.json();
     const rows = this.constructor.parseTable(table);
     this.items = this.constructor.parseItems(rows);
-    this.results = this.items.slice();
     this.totalPopulation = Helper.sum(this.items, 'pop_lsa');
+    this.applyFilters();
     this.renderResults();
   }
 
