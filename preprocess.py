@@ -3,6 +3,18 @@ import json
 import pandas as pd
 
 
+def calculate_per(df, value_key, total_key, new_key):
+    df[new_key] = df.apply(
+        lambda row: (
+            pow(row[value_key] / row[total_key], 0.25)
+            if row[total_key] > 0 and row[value_key] > 0
+            else 0
+        ),
+        axis=1,
+    )
+    return df
+
+
 def parse_int(value, default_value=-1):
     parsed_value = default_value
     try:
@@ -65,6 +77,20 @@ def main():
     lib_df["GEO_ID"] = lib_df.apply(
         lambda row: f"1400000US{str(row['CENTRACT']).zfill(11)}", axis=1
     )
+
+    # Add link to URL
+    lib_df["GEO_URL"] = lib_df.apply(
+        lambda row: f"https://www.openstreetmap.org/?mlat={row['LATITUDE']}&mlon={row['LONGITUD']}&zoom=12",
+        axis=1,
+    )
+
+    # Calculate per capita values
+    lib_df = calculate_per(lib_df, "VISITS", "POPU_LSA", "VISITS_PER")
+    lib_df = calculate_per(lib_df, "TOTPRO", "POPU_LSA", "PRO_PER")
+    lib_df = calculate_per(lib_df, "TOTATTEN", "TOTPRO", "ATTEN_PER")
+    lib_df = calculate_per(lib_df, "PITUSR", "POPU_LSA", "COMP_PER")
+    lib_df = calculate_per(lib_df, "WIFISESS", "POPU_LSA", "WIFI_PER")
+    lib_df = calculate_per(lib_df, "TOTINCM", "POPU_LSA", "INCM_PER")
 
     # Parse census tract description
     income_df["CENSUS_TRACT_DESCRIPTION"] = income_df.apply(
@@ -132,10 +158,9 @@ def main():
     lib_df = pd.merge(lib_df, ethnicity_df, on="GEO_ID", how="left")
     print(f"Found {lib_df.shape[0]:,} entries after merging")
 
-    # Add link to URL
-    lib_df["GEO_URL"] = lib_df.apply(
-        lambda row: f"https://www.openstreetmap.org/?mlat={row['LATITUDE']}&mlon={row['LONGITUD']}&zoom=12",
-        axis=1,
+    # Add merged POC or Hispanic
+    lib_df["PERC_POC_OR_HISPANIC"] = lib_df.apply(
+        lambda row: max(row["PERC_POC"], row["PERC_HISPANIC"]), axis=1
     )
 
     # Take only the data that we need, and rename them
@@ -173,7 +198,14 @@ def main():
         "PERC_WHITE": "perc_white",
         "PERC_POC": "perc_poc",
         "PERC_HISPANIC": "perc_hispanic",
+        "PERC_POC_OR_HISPANIC": "perc_poc_or_hispanic",
         "GEO_URL": "geo_url",
+        "VISITS_PER": "visits_per_capita",
+        "PRO_PER": "programs_per_capita",
+        "ATTEN_PER": "attendance_per_program",
+        "COMP_PER": "computer_per_capita",
+        "WIFI_PER": "wifi_per_capita",
+        "INCM_PER": "op_revenue_per_capita",
         # "B02001_001E": "population",
         # "B02001_002E": "pop_white",
         # "B02001_003E": "pop_black",
