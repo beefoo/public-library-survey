@@ -169,11 +169,12 @@ export default class Map {
 
   loadMarkers() {
     const { data, options } = this;
+    const { opacity, radius } = this.getMarkerProperties();
     const markerGroup = new L.LayerGroup();
     this.markers = data.map((item, index) => {
       const marker = L.circleMarker([item.lat, item.lon], {
-        fillOpacity: options.markerOpacity[0],
-        radius: options.markerRadius[0],
+        fillOpacity: opacity,
+        radius,
         stroke: false,
         color: options.strokeColor,
       });
