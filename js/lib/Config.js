@@ -234,7 +234,7 @@ const Config = {
     },
     {
       label: 'Attendance per program',
-      field: 'attendance_per_program',
+      field: 'attendance_per_program_norm',
       type: 'quant',
       minValue: 0,
     },
