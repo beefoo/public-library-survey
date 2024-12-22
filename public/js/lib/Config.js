@@ -67,7 +67,7 @@ const Config = {
       ],
     },
     {
-      label: 'Median household income (Census tract)',
+      label: 'Median household income (Census)',
       field: 'income',
       type: 'range',
       values: [
@@ -141,7 +141,7 @@ const Config = {
       ],
     },
     {
-      label: 'Percent POC or Hispanic',
+      label: 'Percent POC or Hispanic (Census)',
       field: 'perc_poc_or_hispanic',
       type: 'perc_range',
       values: [
@@ -261,21 +261,20 @@ const Config = {
       minValue: 0,
     },
     {
-      label: 'Median Household Income <small><em>(Census Tract)</em></small>',
+      label: 'Median Household Income <small><em>(Census)</em></small>',
       field: 'income',
       type: 'quant',
       minValue: 0,
     },
     {
-      label: 'Percent POC <small><em>(Census Tract)</em></small>',
+      label: 'Percent POC <small><em>(Census)</em></small>',
       field: 'perc_poc',
       type: 'quant',
       minValue: 0,
       maxValue: 100,
     },
     {
-      label:
-        'Percent Hispanic or Latino <small><em>(Census Tract)</em></small>',
+      label: 'Percent Hispanic or Latino <small><em>(Census)</em></small>',
       field: 'perc_hispanic',
       type: 'quant',
       minValue: 0,

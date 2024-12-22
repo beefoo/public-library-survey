@@ -256,8 +256,8 @@ export default class Map {
     detailsHTML += `  <dt>Service area population</dt><dd>${item.pop_lsa.toLocaleString()}</dd>`;
     detailsHTML += `  <dt>Locale type</dt><dd>${localeType.label}</dd>`;
     detailsHTML += `  <dt>Median household income (Census)</dt><dd>$${item.income.toLocaleString()}</dd>`;
-    detailsHTML += `  <dt>Percent POC</dt><dd>${item.perc_poc}%</dd>`;
-    detailsHTML += `  <dt>Percent Hispanic</dt><dd>${item.perc_hispanic}%</dd>`;
+    detailsHTML += `  <dt>Percent POC (Census)</dt><dd>${item.perc_poc}%</dd>`;
+    detailsHTML += `  <dt>Percent Hispanic (Census)</dt><dd>${item.perc_hispanic}%</dd>`;
     detailsHTML += `  <dt>Staff</dt><dd>${item.staff.toLocaleString()} (${item.librarians.toLocaleString()} librarians)</dd>`;
     detailsHTML += `  <dt>Revenue (operating)</dt><dd>$${item.op_revenue.toLocaleString()} ($${item.op_revenue_per_capita.toLocaleString()} per capita)</dd>`;
     detailsHTML += `  <dt>Revenue (capital)</dt><dd>$${item.cap_revenue.toLocaleString()}</dd>`;

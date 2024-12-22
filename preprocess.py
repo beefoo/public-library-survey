@@ -50,19 +50,19 @@ def main():
     parser.add_argument(
         "-id",
         "--incomedata",
-        default="data/ACSDT5Y2023.B19013-Data-Houshold-Income.csv",
+        default="data/ACSDT5Y2023.B19013-Data-Houshold-Income-By-Zipcode.csv",
         help="Path to income data .csv file",
     )
     parser.add_argument(
         "-rd",
         "--racedata",
-        default="data/ACSDT5Y2023.B02001-Data-Race.csv",
+        default="data/ACSDT5Y2023.B02001-Data-Race-By-Zipcode.csv",
         help="Path to race data .csv file",
     )
     parser.add_argument(
         "-ed",
         "--ethnicitydata",
-        default="data/ACSDT5Y2023.B03003-Data-Hispanic.csv",
+        default="data/ACSDT5Y2023.B03003-Data-Hispanic-By-Zipcode.csv",
         help="Path to ethnicity data .csv file",
     )
     parser.add_argument(
@@ -88,8 +88,13 @@ def main():
     print(f"Found {ethnicity_df.shape[0]:,} entries in {args.ethnicitydata}")
 
     # Parse census tract number
+    # lib_df["GEO_ID"] = lib_df.apply(
+    #     lambda row: f"1400000US{str(row['CENTRACT']).zfill(11)}", axis=1
+    # )
+
+    # Parse zipcode
     lib_df["GEO_ID"] = lib_df.apply(
-        lambda row: f"1400000US{str(row['CENTRACT']).zfill(11)}", axis=1
+        lambda row: f"860Z200US{str(row['ZIP']).zfill(5)}", axis=1
     )
 
     # Add link to URL
@@ -111,10 +116,10 @@ def main():
     lib_df = calculate_rank(lib_df, "WIFI_PER", "WIFI_PER_N")
     lib_df = calculate_per(lib_df, "TOTINCM", "POPU_LSA", "INCM_PER")
 
-    # Parse census tract description
-    income_df["CENSUS_TRACT_DESCRIPTION"] = income_df.apply(
-        lambda row: "{0} ({1}, {2})".format(*str(row["NAME"]).split("; ")), axis=1
-    )
+    # # Parse census tract description
+    # income_df["CENSUS_TRACT_DESCRIPTION"] = income_df.apply(
+    #     lambda row: "{0} ({1}, {2})".format(*str(row["NAME"]).split("; ")), axis=1
+    # )
 
     # Parse income
     income_df["MEDIAN_INCOME"] = income_df.apply(
