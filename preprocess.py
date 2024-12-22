@@ -4,10 +4,10 @@ import pandas as pd
 
 
 def calculate_per(df, value_key, total_key, new_key):
-    curve = 0.25
+    curve = 1.0
     df[new_key] = df.apply(
         lambda row: (
-            pow(row[value_key] / row[total_key], curve)
+            round(pow(row[value_key] / row[total_key], curve), 3)
             if row[total_key] > 0 and row[value_key] > 0
             else 0
         ),
@@ -100,17 +100,16 @@ def main():
 
     # Calculate per capita values
     lib_df = calculate_per(lib_df, "VISITS", "POPU_LSA", "VISITS_PER")
-    lib_df = calculate_rank(lib_df, "VISITS_PER", "VISITS_PER")
+    lib_df = calculate_rank(lib_df, "VISITS_PER", "VISITS_PER_N")
     lib_df = calculate_per(lib_df, "TOTPRO", "POPU_LSA", "PRO_PER")
-    lib_df = calculate_rank(lib_df, "PRO_PER", "PRO_PER")
+    lib_df = calculate_rank(lib_df, "PRO_PER", "PRO_PER_n")
     lib_df = calculate_per(lib_df, "TOTATTEN", "TOTPRO", "ATTEN_PER")
-    lib_df = calculate_rank(lib_df, "ATTEN_PER", "ATTEN_PER")
+    lib_df = calculate_rank(lib_df, "ATTEN_PER", "ATTEN_PER_N")
     lib_df = calculate_per(lib_df, "PITUSR", "POPU_LSA", "COMP_PER")
-    lib_df = calculate_rank(lib_df, "COMP_PER", "COMP_PER")
+    lib_df = calculate_rank(lib_df, "COMP_PER", "COMP_PER_N")
     lib_df = calculate_per(lib_df, "WIFISESS", "POPU_LSA", "WIFI_PER")
-    lib_df = calculate_rank(lib_df, "WIFI_PER", "WIFI_PER")
+    lib_df = calculate_rank(lib_df, "WIFI_PER", "WIFI_PER_N")
     lib_df = calculate_per(lib_df, "TOTINCM", "POPU_LSA", "INCM_PER")
-    lib_df = calculate_rank(lib_df, "INCM_PER", "INCM_PER")
 
     # Parse census tract description
     income_df["CENSUS_TRACT_DESCRIPTION"] = income_df.apply(
@@ -226,6 +225,11 @@ def main():
         "COMP_PER": "computer_per_capita",
         "WIFI_PER": "wifi_per_capita",
         "INCM_PER": "op_revenue_per_capita",
+        "VISITS_PER_N": "visits_per_capita_norm",
+        "PRO_PER_N": "programs_per_capita_norm",
+        "ATTEN_PER_N": "attendance_per_program_norm",
+        "COMP_PER_N": "computer_per_capita_norm",
+        "WIFI_PER_N": "wifi_per_capita_norm",
         # "B02001_001E": "population",
         # "B02001_002E": "pop_white",
         # "B02001_003E": "pop_black",
