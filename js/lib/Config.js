@@ -192,9 +192,19 @@ const Config = {
       direction: 'desc',
     },
     {
+      field: 'op_revenue_per_capita',
+      label: 'Op revenue per capita (low to high)',
+      direction: 'asc',
+    },
+    {
       field: 'perc_poc_or_hispanic',
       label: 'Percent POC or Hispanic (high to low)',
       direction: 'desc',
+    },
+    {
+      field: 'income',
+      label: 'Median household income (low to high)',
+      direction: 'asc',
     },
   ],
 
