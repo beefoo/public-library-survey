@@ -52,13 +52,22 @@ export default class App {
     const mapState = Helper.whereObj(state, (key, value) =>
       mapKeys.includes(key),
     );
-    const dataFilters = Helper.whereObj(
+    let dataFilters = Helper.whereObj(
       state,
       (key, value) => !mapKeys.includes(key),
     );
+    const dataState = {};
+    if ('sortBy' in dataFilters) {
+      const sortBy = dataFilters.sortBy;
+      delete dataFilters.sortBy;
+      dataState.filters = dataFilters;
+      dataState.sortBy = sortBy;
+    } else {
+      dataState.filters = dataFilters;
+    }
     return {
       mapState,
-      dataState: { filters: dataFilters },
+      dataState,
     };
   }
 
