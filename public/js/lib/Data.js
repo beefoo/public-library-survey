@@ -9,6 +9,7 @@ export default class Data {
       onChangeState: () => {},
       onClickResult: (index) => {},
       onFilter: () => {},
+      sortBy: 'name',
       src: 'data/2022-library-data.json',
     };
     this.options = Object.assign(defaults, options);
@@ -17,19 +18,29 @@ export default class Data {
 
   init() {
     this.items = [];
+    this.sortBy = this.options.sortBy;
     this.filters = this.options.filters;
     this.$results = document.getElementById('tab-results');
     this.$filters = document.getElementById('tab-filters');
   }
 
-  applyFilters() {
-    const { filters } = this;
+  applyFiltersAndSort() {
+    const { filters, sortBy } = this;
     this.results = this.items.filter((row) => {
       let valid = true;
       for (const [field, value] of Object.entries(filters)) {
         if (!(field in row && row[field] === value)) valid = false;
       }
       return valid;
+    });
+    const sorter = Helper.where(Config.sortBy, 'field', sortBy);
+    this.results.sort((a, b) => {
+      if ('isalpha' in sorter) {
+        return a[sortBy].toLowerCase().localeCompare(b[sortBy].toLowerCase());
+      }
+      return sorter.direction === 'asc'
+        ? a[sortBy] - b[sortBy]
+        : b[sortBy] - a[sortBy];
     });
   }
 
@@ -43,7 +54,7 @@ export default class Data {
       filters[$filter.getAttribute('data-field')] = value;
     });
     this.filters = filters;
-    this.applyFilters();
+    this.applyFiltersAndSort();
     this.renderResults();
     this.renderFacets();
     this.options.onFilter();
@@ -65,7 +76,7 @@ export default class Data {
   }
 
   getState() {
-    return Object.assign({}, this.filters);
+    return Object.assign({}, this.filters, { sortBy: this.sortBy });
   }
 
   async load() {
@@ -75,7 +86,7 @@ export default class Data {
     const rows = this.constructor.parseTable(table);
     this.items = this.constructor.parseItems(rows);
     this.totalPopulation = Helper.sum(this.items, 'pop_lsa');
-    this.applyFilters();
+    this.applyFiltersAndSort();
     this.renderResults();
   }
 
@@ -91,6 +102,18 @@ export default class Data {
       const $target = event.target.closest('.result-button');
       if ($target) this.onClickResult($target);
     };
+
+    this.$results.onchange = (event) => {
+      const $target = event.target.closest('#sort-by');
+      if ($target) this.onChangeSort();
+    };
+  }
+
+  onChangeSort() {
+    const $sortBy = document.getElementById('sort-by');
+    this.sortBy = $sortBy.value;
+    this.applyFiltersAndSort();
+    this.renderResults();
   }
 
   onClickResult($button) {
@@ -229,11 +252,14 @@ export default class Data {
 
   renderResults() {
     const { maxResults } = this.options;
-    let { results, $results, filters } = this;
+    let { results, $results, filters, sortBy } = this;
     const count = results.length;
     if (count > maxResults) results = results.slice(0, maxResults);
+    // result message
     let html = '';
     html += `<p>${this.getResultMessage()}`;
+
+    // filter list
     if (Object.keys(filters).length > 0) {
       html += ' with filters: ';
       let filterStrings = [];
@@ -251,8 +277,18 @@ export default class Data {
       }
       html += filterStrings.join(', ');
     }
-
     html += '.</p>';
+
+    // Sort by
+    html += '<label for="sort-by">Sort by:</label>';
+    html += '<select id="sort-by" name="sort-by">';
+    Config.sortBy.forEach((s) => {
+      const selected = s.field === sortBy ? 'selected' : '';
+      html += `<option value="${s.field}" ${selected}>${s.label}</option>`;
+    });
+    html += '</select>';
+
+    // Result list
     html += '<ul class="result-list">';
     results.forEach((item, i) => {
       html += `<li><button data-index="${item.originalIndex}" class="result-button">${i + 1}. ${item.name} <small>(${item.city}, ${item.state})</small></button></li>`;

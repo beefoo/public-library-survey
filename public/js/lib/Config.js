@@ -151,38 +151,44 @@ const Config = {
 
   sortBy: [
     {
+      field: 'name',
+      label: 'Name (A-Z)',
+      direction: 'asc',
+      isalpha: 1,
+    },
+    {
       field: 'visits_per_capita',
-      label: 'Visits per capita',
+      label: 'Visits per capita (high to low)',
       direction: 'desc',
     },
     {
       field: 'programs_per_capita',
-      label: 'Programs per capita',
+      label: 'Programs per capita (high to low)',
       direction: 'desc',
     },
     {
       field: 'attendance_per_program',
-      label: 'Attendance per program',
+      label: 'Attendance per program (high to low)',
       direction: 'desc',
     },
     {
       field: 'computer_per_capita',
-      label: 'Computer sessions per capita',
+      label: 'Computer sessions per capita (high to low)',
       direction: 'desc',
     },
     {
       field: 'wifi_per_capita',
-      label: 'Wifi sessions per capita',
+      label: 'Wifi sessions per capita (high to low)',
       direction: 'desc',
     },
     {
       field: 'op_revenue_per_capita',
-      label: 'Op revenue per capita',
+      label: 'Op revenue per capita (high to low)',
       direction: 'desc',
     },
     {
       field: 'perc_poc_or_hispanic',
-      label: 'Percent POC or Hispanic',
+      label: 'Percent POC or Hispanic (high to low)',
       direction: 'desc',
     },
   ],
