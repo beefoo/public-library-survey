@@ -12,6 +12,7 @@ export default class App {
   }
 
   async init() {
+    this.setResetButton();
     const { mapState, dataState } = this.getStateFromURL();
     const mapOptions = Object.assign(mapState, {
       onChangeState: () => {
@@ -69,6 +70,12 @@ export default class App {
       mapState,
       dataState,
     };
+  }
+
+  setResetButton() {
+    const $link = document.getElementById('reset-link');
+    const url = new URL(window.location);
+    $link.setAttribute('href', url.pathname);
   }
 
   updateURL() {

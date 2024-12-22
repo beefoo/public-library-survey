@@ -102,7 +102,7 @@ def main():
     lib_df = calculate_per(lib_df, "VISITS", "POPU_LSA", "VISITS_PER")
     lib_df = calculate_rank(lib_df, "VISITS_PER", "VISITS_PER_N")
     lib_df = calculate_per(lib_df, "TOTPRO", "POPU_LSA", "PRO_PER")
-    lib_df = calculate_rank(lib_df, "PRO_PER", "PRO_PER_n")
+    lib_df = calculate_rank(lib_df, "PRO_PER", "PRO_PER_N")
     lib_df = calculate_per(lib_df, "TOTATTEN", "TOTPRO", "ATTEN_PER")
     lib_df = calculate_rank(lib_df, "ATTEN_PER", "ATTEN_PER_N")
     lib_df = calculate_per(lib_df, "PITUSR", "POPU_LSA", "COMP_PER")

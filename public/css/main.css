@@ -171,6 +171,18 @@ button.tab-button:hover {
   color: white;
 }
 
+.reset-button {
+  display: block;
+  background: #111;
+  color: white;
+  text-decoration: none;
+  padding: 6px 12px;
+  position: absolute;
+  top: 52px;
+  right: 12px;
+  z-index: 1001;
+}
+
 .meta {
   position: absolute;
   bottom: 12px;
