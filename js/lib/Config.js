@@ -54,30 +54,35 @@ const Config = {
     {
       label: 'Operating budget per capita',
       field: 'op_revenue_per_capita',
-      type: 'perc_range',
+      type: 'range',
       values: [
-        { minValue: 80, label: 'Highest 20%' },
-        { minValue: 60, maxValue: 80, label: 'Higher 20%' },
-        { minValue: 40, maxValue: 60, label: 'Middle 20%' },
-        { minValue: 20, maxValue: 40, label: 'Lower 20%' },
-        { minValue: 0, maxValue: 20, label: 'Lowest 20%' },
+        { minValue: 500, label: '$500+' },
+        { minValue: 250, maxValue: 500, label: '$250 - $500' },
+        { minValue: 100, maxValue: 250, label: '$100 - $250' },
+        { minValue: 75, maxValue: 100, label: '$75 - $100' },
+        { minValue: 50, maxValue: 75, label: '$50 - $75' },
+        { minValue: 25, maxValue: 50, label: '$25 - $50' },
+        { minValue: 10, maxValue: 25, label: '$10 - $25' },
+        { minValue: 0, maxValue: 10, label: 'Under $10' },
       ],
     },
     {
       label: 'Median household income (Census tract)',
       field: 'income',
-      type: 'perc_range',
+      type: 'range',
       values: [
-        { minValue: 80, label: 'Upper 10%' },
-        { minValue: 60, maxValue: 80, label: 'Upper-middle 20%' },
-        { minValue: 40, maxValue: 60, label: 'Middle 20%' },
-        { minValue: 20, maxValue: 40, label: 'Lower-middle 20%' },
-        { minValue: 0, maxValue: 20, label: 'Lower 10%' },
+        { minValue: 200000, label: '$200K+' },
+        { minValue: 150000, maxValue: 200000, label: '$150K - $200K' },
+        { minValue: 100000, maxValue: 150000, label: '$100K - $150K' },
+        { minValue: 75000, maxValue: 100000, label: '$75K - $100K' },
+        { minValue: 50000, maxValue: 75000, label: '$50K - $75K' },
+        { minValue: 25000, maxValue: 50000, label: '$25K - $50K' },
+        { minValue: 0, maxValue: 25000, label: 'Under $25K' },
       ],
     },
     {
       label: 'Visits per capita',
-      field: 'visits_per_capita',
+      field: 'visits_per_capita_norm',
       type: 'perc_range',
       values: [
         { minValue: 80, label: 'Highest 20%' },
@@ -89,7 +94,7 @@ const Config = {
     },
     {
       label: 'Programs per capita',
-      field: 'programs_per_capita',
+      field: 'programs_per_capita_norm',
       type: 'perc_range',
       values: [
         { minValue: 80, label: 'Highest 20%' },
@@ -101,7 +106,7 @@ const Config = {
     },
     {
       label: 'Attendance per program',
-      field: 'attendance_per_program',
+      field: 'attendance_per_program_norm',
       type: 'perc_range',
       values: [
         { minValue: 80, label: 'Highest 20%' },
@@ -113,7 +118,7 @@ const Config = {
     },
     {
       label: 'Computer sessions per capita',
-      field: 'computer_per_capita',
+      field: 'computer_per_capita_norm',
       type: 'perc_range',
       values: [
         { minValue: 80, label: 'Highest 20%' },
@@ -125,7 +130,7 @@ const Config = {
     },
     {
       label: 'Wifi sessions per capita',
-      field: 'wifi_per_capita',
+      field: 'wifi_per_capita_norm',
       type: 'perc_range',
       values: [
         { minValue: 80, label: 'Highest 20%' },
@@ -157,27 +162,27 @@ const Config = {
       isalpha: 1,
     },
     {
-      field: 'visits_per_capita',
+      field: 'visits_per_capita_norm',
       label: 'Visits per capita (high to low)',
       direction: 'desc',
     },
     {
-      field: 'programs_per_capita',
+      field: 'programs_per_capita_norm',
       label: 'Programs per capita (high to low)',
       direction: 'desc',
     },
     {
-      field: 'attendance_per_program',
+      field: 'attendance_per_program_norm',
       label: 'Attendance per program (high to low)',
       direction: 'desc',
     },
     {
-      field: 'computer_per_capita',
+      field: 'computer_per_capita_norm',
       label: 'Computer sessions per capita (high to low)',
       direction: 'desc',
     },
     {
-      field: 'wifi_per_capita',
+      field: 'wifi_per_capita_norm',
       label: 'Wifi sessions per capita (high to low)',
       direction: 'desc',
     },
@@ -203,7 +208,7 @@ const Config = {
     },
     {
       label: 'Visits per capita',
-      field: 'visits_per_capita',
+      field: 'visits_per_capita_norm',
       type: 'quant',
       minValue: 0,
     },
@@ -219,10 +224,11 @@ const Config = {
       field: 'op_revenue_per_capita',
       type: 'quant',
       minValue: 0,
+      pow: 0.3,
     },
     {
       label: 'Programs per capita',
-      field: 'programs_per_capita',
+      field: 'programs_per_capita_norm',
       type: 'quant',
       minValue: 0,
     },
@@ -234,13 +240,13 @@ const Config = {
     },
     {
       label: 'Computer sessions per capita',
-      field: 'computer_per_capita',
+      field: 'computer_per_capita_norm',
       type: 'quant',
       minValue: 0,
     },
     {
       label: 'Wifi sessions per capita',
-      field: 'wifi_per_capita',
+      field: 'wifi_per_capita_norm',
       type: 'quant',
       minValue: 0,
     },
