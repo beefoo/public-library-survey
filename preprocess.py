@@ -4,12 +4,26 @@ import pandas as pd
 
 
 def calculate_per(df, value_key, total_key, new_key):
+    curve = 0.25
     df[new_key] = df.apply(
         lambda row: (
-            pow(row[value_key] / row[total_key], 0.25)
+            pow(row[value_key] / row[total_key], curve)
             if row[total_key] > 0 and row[value_key] > 0
             else 0
         ),
+        axis=1,
+    )
+    return df
+
+
+def calculate_rank(df, value_key, new_key, descending=False):
+    precision = 10000
+    df[value_key].fillna(value=-1, inplace=True)
+    values = df[value_key].tolist()
+    values = [int(round(v * precision)) for v in values]
+    values.sort(reverse=descending)
+    df[new_key] = df.apply(
+        lambda row: (values.index(int(round(row[value_key] * precision))) + 1),
         axis=1,
     )
     return df
@@ -86,11 +100,17 @@ def main():
 
     # Calculate per capita values
     lib_df = calculate_per(lib_df, "VISITS", "POPU_LSA", "VISITS_PER")
+    lib_df = calculate_rank(lib_df, "VISITS_PER", "VISITS_PER")
     lib_df = calculate_per(lib_df, "TOTPRO", "POPU_LSA", "PRO_PER")
+    lib_df = calculate_rank(lib_df, "PRO_PER", "PRO_PER")
     lib_df = calculate_per(lib_df, "TOTATTEN", "TOTPRO", "ATTEN_PER")
+    lib_df = calculate_rank(lib_df, "ATTEN_PER", "ATTEN_PER")
     lib_df = calculate_per(lib_df, "PITUSR", "POPU_LSA", "COMP_PER")
+    lib_df = calculate_rank(lib_df, "COMP_PER", "COMP_PER")
     lib_df = calculate_per(lib_df, "WIFISESS", "POPU_LSA", "WIFI_PER")
+    lib_df = calculate_rank(lib_df, "WIFI_PER", "WIFI_PER")
     lib_df = calculate_per(lib_df, "TOTINCM", "POPU_LSA", "INCM_PER")
+    lib_df = calculate_rank(lib_df, "INCM_PER", "INCM_PER")
 
     # Parse census tract description
     income_df["CENSUS_TRACT_DESCRIPTION"] = income_df.apply(

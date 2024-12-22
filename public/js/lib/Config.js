@@ -60,7 +60,7 @@ const Config = {
         { minValue: 60, maxValue: 80, label: 'Higher 20%' },
         { minValue: 40, maxValue: 60, label: 'Middle 20%' },
         { minValue: 20, maxValue: 40, label: 'Lower 20%' },
-        { minValue: 0, maxValue: 20, label: 'Lowest 10%' },
+        { minValue: 0, maxValue: 20, label: 'Lowest 20%' },
       ],
     },
     {
@@ -84,7 +84,7 @@ const Config = {
         { minValue: 60, maxValue: 80, label: 'Higher 20%' },
         { minValue: 40, maxValue: 60, label: 'Middle 20%' },
         { minValue: 20, maxValue: 40, label: 'Lower 20%' },
-        { minValue: 0, maxValue: 20, label: 'Lowest 10%' },
+        { minValue: 0, maxValue: 20, label: 'Lowest 20%' },
       ],
     },
     {
@@ -96,11 +96,11 @@ const Config = {
         { minValue: 60, maxValue: 80, label: 'Higher 20%' },
         { minValue: 40, maxValue: 60, label: 'Middle 20%' },
         { minValue: 20, maxValue: 40, label: 'Lower 20%' },
-        { minValue: 0, maxValue: 20, label: 'Lowest 10%' },
+        { minValue: 0, maxValue: 20, label: 'Lowest 20%' },
       ],
     },
     {
-      label: 'Attedance per program',
+      label: 'Attendance per program',
       field: 'attendance_per_program',
       type: 'perc_range',
       values: [
@@ -108,7 +108,7 @@ const Config = {
         { minValue: 60, maxValue: 80, label: 'Higher 20%' },
         { minValue: 40, maxValue: 60, label: 'Middle 20%' },
         { minValue: 20, maxValue: 40, label: 'Lower 20%' },
-        { minValue: 0, maxValue: 20, label: 'Lowest 10%' },
+        { minValue: 0, maxValue: 20, label: 'Lowest 20%' },
       ],
     },
     {
@@ -120,7 +120,7 @@ const Config = {
         { minValue: 60, maxValue: 80, label: 'Higher 20%' },
         { minValue: 40, maxValue: 60, label: 'Middle 20%' },
         { minValue: 20, maxValue: 40, label: 'Lower 20%' },
-        { minValue: 0, maxValue: 20, label: 'Lowest 10%' },
+        { minValue: 0, maxValue: 20, label: 'Lowest 20%' },
       ],
     },
     {
@@ -132,7 +132,7 @@ const Config = {
         { minValue: 60, maxValue: 80, label: 'Higher 20%' },
         { minValue: 40, maxValue: 60, label: 'Middle 20%' },
         { minValue: 20, maxValue: 40, label: 'Lower 20%' },
-        { minValue: 0, maxValue: 20, label: 'Lowest 10%' },
+        { minValue: 0, maxValue: 20, label: 'Lowest 20%' },
       ],
     },
     {
@@ -144,7 +144,7 @@ const Config = {
         { minValue: 60, maxValue: 80, label: 'Higher 20%' },
         { minValue: 40, maxValue: 60, label: 'Middle 20%' },
         { minValue: 20, maxValue: 40, label: 'Lower 20%' },
-        { minValue: 0, maxValue: 20, label: 'Lowest 10%' },
+        { minValue: 0, maxValue: 20, label: 'Lowest 20%' },
       ],
     },
   ],
