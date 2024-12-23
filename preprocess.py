@@ -2,40 +2,7 @@ import argparse
 import json
 import pandas as pd
 
-
-def calculate_per(df, value_key, total_key, new_key):
-    curve = 1.0
-    df[new_key] = df.apply(
-        lambda row: (
-            round(pow(row[value_key] / row[total_key], curve), 3)
-            if row[total_key] > 0 and row[value_key] > 0
-            else 0
-        ),
-        axis=1,
-    )
-    return df
-
-
-def calculate_rank(df, value_key, new_key, descending=False):
-    precision = 10000
-    df[value_key].fillna(value=-1, inplace=True)
-    values = df[value_key].tolist()
-    values = [int(round(v * precision)) for v in values]
-    values.sort(reverse=descending)
-    df[new_key] = df.apply(
-        lambda row: (values.index(int(round(row[value_key] * precision))) + 1),
-        axis=1,
-    )
-    return df
-
-
-def parse_int(value, default_value=-1):
-    parsed_value = default_value
-    try:
-        parsed_value = int(str(value).replace(",", "").replace("+", ""))
-    except:
-        parsed_value = default_value
-    return parsed_value
+from helpers import *
 
 
 def main():
