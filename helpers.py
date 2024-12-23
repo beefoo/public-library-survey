@@ -76,6 +76,14 @@ def calculate_rank(df, value_key, new_key, descending=False):
     return df
 
 
+def find_where(df, key, value):
+    results = df.query(f'{key} == "{value}"')
+    print(results.shape[0])
+    if results.shape[0] > 0:
+        return results.iloc[0]
+    return None
+
+
 def parse_int(value, default_value=-1):
     parsed_value = default_value
     try:
