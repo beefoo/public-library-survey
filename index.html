@@ -36,7 +36,7 @@
             <p>Loading data...</p>
           </div>
           <div id="tab-filters" class="panel-tab"></div>
-          <div id="tab-colors" class="panel-tab"></div>
+          <div id="tab-colors" class="panel-tab""></div>
         </div>
       </div>
       <div class="viewer">
@@ -48,8 +48,25 @@
         </div>
         <a href="index.html" id="reset-link" class="reset-button">Reset all</a>
         <div id="meta" class="meta">
-          <h2 id="meta-title" class="meta-title"></h2>
-          <div id="meta-details" class="meta-details"></div>
+          <div class="meta-head">
+            <h2 id="meta-title" class="meta-title"></h2>
+            <div class="meta-menu">
+              <button id="tab-button-details" class="tab-button active" data-tab="meta-details">
+                Metadata
+              </button>
+              <button id="tab-button-similar" class="tab-button" data-tab="meta-similar">
+                Similar libraries
+              </button>
+            </div>
+          </div>
+          <div
+            id="meta-details"
+            class="meta-details panel-tab active"
+          ></div>
+          <div
+            id="meta-similar"
+            class="meta-similar panel-tab"
+          ></div>
           <button id="close-details" class="close-details">⏷</button>
         </div>
       </div>

@@ -31,6 +31,20 @@ export default class Helper {
     return arr.reduce((a, b) => Math.max(a, b), -Infinity);
   }
 
+  static medianList(values) {
+    if (values.length === 0) return 0;
+
+    // Sorting values, preventing original array
+    // from being mutated.
+    values = [...values].sort((a, b) => a - b);
+
+    const half = Math.floor(values.length / 2);
+
+    return values.length % 2
+      ? values[half]
+      : (values[half - 1] + values[half]) / 2;
+  }
+
   static minList(arr) {
     return arr.reduce((a, b) => Math.min(a, b), Infinity);
   }
