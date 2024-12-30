@@ -34,11 +34,13 @@ export default class Map {
     this.data = [];
     this.markers = [];
     this.selectedMarkerIndex = parseInt(this.options.select);
+    this.activeMarkerIndex = this.selectedMarkerIndex;
     this.colorBy = this.options.colorBy;
     this.gradient = new Gradient();
     this.$meta = document.getElementById('meta');
     this.$metaTitle = document.getElementById('meta-title');
     this.$metaDetails = document.getElementById('meta-details');
+    this.$metaSimilar = document.getElementById('meta-similar');
     this.loadMap();
   }
 
@@ -50,7 +52,7 @@ export default class Map {
   }
 
   filter(indices) {
-    const { opacity, radius } = this.getMarkerProperties();
+    const { opacity } = this.getMarkerProperties();
     this.markers.forEach((marker, i) => {
       const isVisible = indices.includes(i);
       this.markers[i].visible = isVisible;
@@ -149,7 +151,11 @@ export default class Map {
       input.onchange = (event) => this.onColorChange(event);
     });
     document.getElementById('close-details').onclick = (event) => {
-      this.deselectMarker();
+      this.toggleMeta();
+    };
+    this.$metaSimilar.onclick = (event) => {
+      const $target = event.target.closest('.item-link');
+      if ($target) this.onClickItem($target);
     };
   }
 
@@ -192,6 +198,12 @@ export default class Map {
       this.selectMarker(this.selectedMarkerIndex);
   }
 
+  onClickItem($button) {
+    const index = parseInt($button.getAttribute('data-index'), 10);
+    this.selectMarker(index);
+    this.jumpToMarker(index);
+  }
+
   onColorChange(event) {
     const input = event.currentTarget;
     const { value } = input;
@@ -207,6 +219,7 @@ export default class Map {
     const { $meta, $metaTitle } = this;
     if ($meta.classList.contains('selected')) return;
     const item = this.data[markerIndex];
+    this.activeMarkerIndex = markerIndex;
     $metaTitle.innerHTML = `${item.name} <small>(${item.city}, ${item.state})</small>`;
     $meta.classList.add('active');
   }
@@ -225,8 +238,67 @@ export default class Map {
     this.options.onChangeState();
   }
 
+  renderDetails(item) {
+    const localeTypeFilter = Helper.where(
+      Config.filterBy,
+      'field',
+      'locale_type',
+    );
+    const localeType = Helper.where(
+      localeTypeFilter.values,
+      'value',
+      item.locale_type,
+    );
+    let html = '';
+    html += '<dl>';
+    html += `  <dt>Address</dt><dd><a href="${item.geo_url}" target="_blank">${item.address}, ${item.city}, ${item.state}</a></dd>`;
+    html += `  <dt>Service area population</dt><dd>${item.pop_lsa.toLocaleString()}</dd>`;
+    html += `  <dt>Locale type</dt><dd>${localeType.label}</dd>`;
+    html += `  <dt>Median household income (Census)</dt><dd>$${item.income.toLocaleString()}</dd>`;
+    html += `  <dt>Percent POC (Census)</dt><dd>${item.perc_poc}%</dd>`;
+    html += `  <dt>Percent Hispanic (Census)</dt><dd>${item.perc_hispanic}%</dd>`;
+    html += `  <dt>Staff</dt><dd>${item.staff.toLocaleString()} (${item.librarians.toLocaleString()} librarians)</dd>`;
+    html += `  <dt>Revenue (operating)</dt><dd>$${item.op_revenue.toLocaleString()} ($${item.op_revenue_per_capita.toLocaleString()} per capita)</dd>`;
+    html += `  <dt>Revenue (capital)</dt><dd>$${item.cap_revenue.toLocaleString()}</dd>`;
+    html += '</dl>';
+    html += '<dl>';
+    html += `  <dt>Physical items</dt><dd>${item.tot_phys_items.toLocaleString()}</dd>`;
+    html += `  <dt>Electronic items</dt><dd>${item.tot_e_items.toLocaleString()}</dd>`;
+    html += `  <dt>Visits</dt><dd>${item.visits.toLocaleString()} (${item.visits_per_capita.toLocaleString()} per capita)</dd>`;
+    html += `  <dt>Total programs</dt><dd>${item.programs.toLocaleString()} (${item.programs_per_capita.toLocaleString()} per capita)</dd>`;
+    html += `  <dt>On-site program</dt><dd>${item.onsite_programs.toLocaleString()}</dd>`;
+    html += `  <dt>Total program attendence</dt><dd>${item.program_attendance.toLocaleString()} (${item.attendance_per_program.toLocaleString()} per program)</dd>`;
+    html += `  <dt>On-site program attendance</dt><dd>${item.onsite_program_attendance.toLocaleString()}</dd>`;
+    html += `  <dt>Computer sessions</dt><dd>${item.computer_sessions.toLocaleString()} (${item.computer_per_capita.toLocaleString()} per capita)</dd>`;
+    html += `  <dt>Wireless sessions</dt><dd>${item.wireless_sessions.toLocaleString()} (${item.wifi_per_capita.toLocaleString()} per capita)</dd>`;
+    html += '</dl>';
+    this.$metaDetails.innerHTML = html;
+  }
+
+  renderSimilar(item) {
+    if (!('similar' in item) || !item.similar) return;
+    const { data } = this;
+    const rows = [item].concat(item.similar.map((index) => data[index]));
+    let html = '<table>';
+    html +=
+      '<tr><th>&nbsp;</th><th>Name</th><th>Location</th><th>Income</th><th>% POC</th><th>Onsite engagment</th><th>Digital engagement</th></tr>';
+    rows.forEach((row, i) => {
+      html += '<tr>';
+      html += `<td>${i}.</td>`;
+      html += `<td><button class="item-link" data-index="${row.originalIndex}">${row.name}</button></td>`;
+      html += `<td>${row.city}, ${row.state}</td>`;
+      html += `<td>$${row.income.toLocaleString()}</td>`;
+      html += `<td>${row.perc_poc}%</td>`;
+      html += `<td>${row.physEngagementScore}</td>`;
+      html += `<td>${row.digiEngagementScore}</td>`;
+      html += '</tr>';
+    });
+    html += '</table>';
+    this.$metaSimilar.innerHTML = html;
+  }
+
   selectMarker(markerIndex) {
-    const { $meta, $metaTitle, $metaDetails } = this;
+    const { $meta, $metaTitle } = this;
     if (
       $meta.classList.contains('selected') &&
       markerIndex === this.selectedMarkerIndex
@@ -238,47 +310,22 @@ export default class Map {
       this.markers[this.selectedMarkerIndex].el.setStyle({ stroke: false });
     this.markers[markerIndex].el.setStyle({ stroke: true }).bringToFront();
     this.selectedMarkerIndex = markerIndex;
+    this.activeMarkerIndex = markerIndex;
     const item = this.data[markerIndex];
-    const localeTypeFilter = Helper.where(
-      Config.filterBy,
-      'field',
-      'locale_type',
-    );
-    const localeType = Helper.where(
-      localeTypeFilter.values,
-      'value',
-      item.locale_type,
-    );
     $metaTitle.innerHTML = `${item.name} <small>(${item.city}, ${item.state})</small>`;
-    let detailsHTML = '';
-    detailsHTML += '<dl>';
-    detailsHTML += `  <dt>Address</dt><dd><a href="${item.geo_url}" target="_blank">${item.address}, ${item.city}, ${item.state}</a></dd>`;
-    detailsHTML += `  <dt>Service area population</dt><dd>${item.pop_lsa.toLocaleString()}</dd>`;
-    detailsHTML += `  <dt>Locale type</dt><dd>${localeType.label}</dd>`;
-    detailsHTML += `  <dt>Median household income (Census)</dt><dd>$${item.income.toLocaleString()}</dd>`;
-    detailsHTML += `  <dt>Percent POC (Census)</dt><dd>${item.perc_poc}%</dd>`;
-    detailsHTML += `  <dt>Percent Hispanic (Census)</dt><dd>${item.perc_hispanic}%</dd>`;
-    detailsHTML += `  <dt>Staff</dt><dd>${item.staff.toLocaleString()} (${item.librarians.toLocaleString()} librarians)</dd>`;
-    detailsHTML += `  <dt>Revenue (operating)</dt><dd>$${item.op_revenue.toLocaleString()} ($${item.op_revenue_per_capita.toLocaleString()} per capita)</dd>`;
-    detailsHTML += `  <dt>Revenue (capital)</dt><dd>$${item.cap_revenue.toLocaleString()}</dd>`;
-    detailsHTML += '</dl>';
-    detailsHTML += '<dl>';
-    detailsHTML += `  <dt>Physical items</dt><dd>${item.tot_phys_items.toLocaleString()}</dd>`;
-    detailsHTML += `  <dt>Electronic items</dt><dd>${item.tot_e_items.toLocaleString()}</dd>`;
-    detailsHTML += `  <dt>Visits</dt><dd>${item.visits.toLocaleString()} (${item.visits_per_capita.toLocaleString()} per capita)</dd>`;
-    detailsHTML += `  <dt>Total programs</dt><dd>${item.programs.toLocaleString()} (${item.programs_per_capita.toLocaleString()} per capita)</dd>`;
-    detailsHTML += `  <dt>On-site program</dt><dd>${item.onsite_programs.toLocaleString()}</dd>`;
-    detailsHTML += `  <dt>Total program attendence</dt><dd>${item.program_attendance.toLocaleString()} (${item.attendance_per_program.toLocaleString()} per program)</dd>`;
-    detailsHTML += `  <dt>On-site program attendance</dt><dd>${item.onsite_program_attendance.toLocaleString()}</dd>`;
-    detailsHTML += `  <dt>Computer sessions</dt><dd>${item.computer_sessions.toLocaleString()} (${item.computer_per_capita.toLocaleString()} per capita)</dd>`;
-    detailsHTML += `  <dt>Wireless sessions</dt><dd>${item.wireless_sessions.toLocaleString()} (${item.wifi_per_capita.toLocaleString()} per capita)</dd>`;
-    detailsHTML += '</dl>';
-    $metaDetails.innerHTML = detailsHTML;
+    this.renderDetails(item);
+    this.renderSimilar(item);
     $meta.classList.add('active', 'selected');
   }
 
   setData(data) {
     this.data = data;
+  }
+
+  toggleMeta() {
+    const selected = this.$meta.classList.contains('selected');
+    if (selected) this.deselectMarker();
+    else this.selectMarker(this.activeMarkerIndex);
   }
 
   updateColors(colorOptionKey) {

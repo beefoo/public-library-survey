@@ -7,9 +7,10 @@ export default class Data {
       filters: {},
       maxResults: 1000,
       onChangeState: () => {},
-      onClickResult: (index) => {},
+      onClickResult: (_index) => {},
       onFilter: () => {},
       sortBy: 'name',
+      similarity: 'data/2022-library-data-similarity.json',
       src: 'data/2022-library-data.json',
     };
     this.options = Object.assign(defaults, options);
@@ -84,8 +85,14 @@ export default class Data {
     const response = await fetch(options.src);
     const table = await response.json();
     const rows = this.constructor.parseTable(table);
-    this.items = this.constructor.parseItems(rows);
-    this.totalPopulation = Helper.sum(this.items, 'pop_lsa');
+    const items = this.constructor.parseItems(rows);
+    const similarityResp = await fetch(options.similarity);
+    const similarity = await similarityResp.json();
+    items.forEach((_item, i) => {
+      items[i].similar = similarity[i];
+    });
+    this.totalPopulation = Helper.sum(items, 'pop_lsa');
+    this.items = items;
     this.applyFiltersAndSort();
     this.renderResults();
   }
@@ -134,9 +141,13 @@ export default class Data {
         ranges[field] = [minValue, maxValue];
       }
     });
-    return rows.map((row, i) => {
+    const items = rows.map((row, i) => {
       const item = structuredClone(row);
       item.originalIndex = i;
+      item.physEngagement =
+        (item.attendance_per_program + item.visits_per_capita) * 0.5;
+      item.digiEngagement =
+        (item.computer_per_capita + item.wifi_per_capita) * 0.5;
       // add new fields for filters that are ranges
       filterBy.forEach((filter) => {
         const { field, type, values, label } = filter;
@@ -180,6 +191,23 @@ export default class Data {
       });
       return item;
     });
+
+    const medianPhysEngagement = Helper.medianList(
+      items.map((item) => item.physEngagement),
+    );
+    const medianDigiEngagement = Helper.medianList(
+      items.map((item) => item.digiEngagement),
+    );
+    items.forEach((item, i) => {
+      items[i].physEngagementScore = Data.toPlusMinus(
+        item.physEngagement - medianPhysEngagement,
+      );
+      items[i].digiEngagementScore = Data.toPlusMinus(
+        item.digiEngagement - medianDigiEngagement,
+      );
+    });
+
+    return items;
   }
 
   static parseTable(table) {
@@ -296,5 +324,12 @@ export default class Data {
     html += '</ul>';
     $results.innerHTML = html;
     $results.scrollTop = 0;
+  }
+
+  static toPlusMinus(value, precision = 3) {
+    let string = '';
+    if (value > 0) string += '+';
+    string += value.toFixed(precision);
+    return string;
   }
 }

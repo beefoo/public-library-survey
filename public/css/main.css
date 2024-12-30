@@ -58,13 +58,13 @@ button.tab-button:hover {
   overflow: hidden;
   overflow-y: auto;
 }
-.panel-tab {
+.panel-tabs .panel-tab {
   width: 100%;
   padding: 12px;
   display: none;
   box-sizing: border-box;
 }
-.panel-tab.active {
+.panel-tabs .panel-tab.active {
   display: block;
 }
 
@@ -199,14 +199,28 @@ button.tab-button:hover {
   display: block;
   z-index: 1000;
 }
-h2.meta-title {
-  margin: 0;
-  font-size: 1.4rem;
+.meta-head {
+  background: #111;
+  padding: 6px;
+  margin: -6px;
 }
-.meta-details {
+.meta.active.selected .meta-head {
+  padding: 6px 6px 0 6px;
+  margin: -6px -6px 12px -6px;
+}
+h2.meta-title {
+  margin: 0 0 6px;
+  font-size: 1.4rem;
+  color: white;
+}
+.meta-menu,
+.panel-tab {
   display: none;
 }
-.meta.active.selected .meta-details {
+.meta.active.selected .meta-menu {
+  display: block;
+}
+.meta.active.selected .panel-tab.active {
   display: flex;
 }
 .meta-details dl {
@@ -218,9 +232,9 @@ h2.meta-title {
   font-weight: bold;
 }
 .close-details {
-  display: none;
+  display: block;
   position: absolute;
-  top: 12px;
+  top: 6px;
   right: 12px;
   background: black;
   color: white;
@@ -236,10 +250,38 @@ h2.meta-title {
   font-weight: bold;
   border-radius: 50%;
   cursor: pointer;
+  transform-origin: center center;
+  transform: rotate(180deg);
 }
 .close-details:hover {
   background-color: #333;
 }
 .meta.active.selected .close-details {
-  display: block;
+  transform: rotate(0deg);
+}
+
+.meta-similar table {
+  border-collapse: collapse;
+}
+.meta-similar table button {
+  cursor: pointer;
+  font-weight: bold;
+  border: none;
+  margin: 0;
+  padding: 0;
+  background: none;
+  text-align: left;
+}
+.meta-similar table button:hover {
+  text-decoration: underline;
+}
+.meta-similar tr:nth-child(even) {
+  background: #ccc;
+}
+.meta-similar td {
+  border-left: 1px solid #aaa;
+  padding: 0 2px;
+}
+.meta-similar td:first-child {
+  border-left: none;
 }
