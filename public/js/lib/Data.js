@@ -144,10 +144,12 @@ export default class Data {
     const items = rows.map((row, i) => {
       const item = structuredClone(row);
       item.originalIndex = i;
-      item.physEngagement =
-        (item.attendance_per_program + item.visits_per_capita) * 0.5;
-      item.digiEngagement =
-        (item.computer_per_capita + item.wifi_per_capita) * 0.5;
+      item.perc_onsite_programs =
+        item.programs > 0 ? (item.onsite_programs / item.programs) * 100 : 0;
+      item.onsite_attendance_per_program =
+        item.onsite_programs > 0
+          ? item.onsite_program_attendance / item.onsite_programs
+          : 0;
       // add new fields for filters that are ranges
       filterBy.forEach((filter) => {
         const { field, type, values, label } = filter;
@@ -191,20 +193,30 @@ export default class Data {
       });
       return item;
     });
-
-    const medianPhysEngagement = Helper.medianList(
-      items.map((item) => item.physEngagement),
-    );
-    const medianDigiEngagement = Helper.medianList(
-      items.map((item) => item.digiEngagement),
-    );
+    // calculate +/- median values
+    const scoreColumns = [
+      'income',
+      'perc_poc',
+      'perc_hispanic',
+      'op_revenue_per_capita',
+      'visits_per_capita',
+      'programs_per_capita',
+      'attendance_per_program',
+      'onsite_attendance_per_program',
+      'computer_per_capita',
+      'wifi_per_capita',
+    ];
+    const medianValues = {};
+    scoreColumns.forEach((col) => {
+      medianValues[col] = Helper.medianList(items.map((item) => item[col]));
+    });
     items.forEach((item, i) => {
-      items[i].physEngagementScore = Data.toPlusMinus(
-        item.physEngagement - medianPhysEngagement,
-      );
-      items[i].digiEngagementScore = Data.toPlusMinus(
-        item.digiEngagement - medianDigiEngagement,
-      );
+      scoreColumns.forEach((col) => {
+        items[i][`${col}_score`] = Data.toPlusMinus(
+          item[col] - medianValues[col],
+          2,
+        );
+      });
     });
 
     return items;

@@ -254,23 +254,22 @@ export default class Map {
     html += `  <dt>Address</dt><dd><a href="${item.geo_url}" target="_blank">${item.address}, ${item.city}, ${item.state}</a></dd>`;
     html += `  <dt>Service area population</dt><dd>${item.pop_lsa.toLocaleString()}</dd>`;
     html += `  <dt>Locale type</dt><dd>${localeType.label}</dd>`;
-    html += `  <dt>Median household income (Census)</dt><dd>$${item.income.toLocaleString()}</dd>`;
-    html += `  <dt>Percent POC (Census)</dt><dd>${item.perc_poc}%</dd>`;
-    html += `  <dt>Percent Hispanic (Census)</dt><dd>${item.perc_hispanic}%</dd>`;
+    html += `  <dt>Median household income (Census)</dt><dd>$${item.income.toLocaleString()} (${item.income_score.toLocaleString()})</dd>`;
+    html += `  <dt>Percent POC (Census)</dt><dd>${item.perc_poc}% (${item.perc_poc_score}%)</dd>`;
+    html += `  <dt>Percent Hispanic (Census)</dt><dd>${item.perc_hispanic}% (${item.perc_hispanic_score}%)</dd>`;
     html += `  <dt>Staff</dt><dd>${item.staff.toLocaleString()} (${item.librarians.toLocaleString()} librarians)</dd>`;
-    html += `  <dt>Revenue (operating)</dt><dd>$${item.op_revenue.toLocaleString()} ($${item.op_revenue_per_capita.toLocaleString()} per capita)</dd>`;
+    html += `  <dt>Revenue (operating)</dt><dd>$${item.op_revenue.toLocaleString()} / $${item.op_revenue_per_capita.toLocaleString()} (${item.op_revenue_per_capita_score}) per capita</dd>`;
     html += `  <dt>Revenue (capital)</dt><dd>$${item.cap_revenue.toLocaleString()}</dd>`;
     html += '</dl>';
     html += '<dl>';
-    html += `  <dt>Physical items</dt><dd>${item.tot_phys_items.toLocaleString()}</dd>`;
-    html += `  <dt>Electronic items</dt><dd>${item.tot_e_items.toLocaleString()}</dd>`;
-    html += `  <dt>Visits</dt><dd>${item.visits.toLocaleString()} (${item.visits_per_capita.toLocaleString()} per capita)</dd>`;
-    html += `  <dt>Total programs</dt><dd>${item.programs.toLocaleString()} (${item.programs_per_capita.toLocaleString()} per capita)</dd>`;
-    html += `  <dt>On-site program</dt><dd>${item.onsite_programs.toLocaleString()}</dd>`;
-    html += `  <dt>Total program attendence</dt><dd>${item.program_attendance.toLocaleString()} (${item.attendance_per_program.toLocaleString()} per program)</dd>`;
-    html += `  <dt>On-site program attendance</dt><dd>${item.onsite_program_attendance.toLocaleString()}</dd>`;
-    html += `  <dt>Computer sessions</dt><dd>${item.computer_sessions.toLocaleString()} (${item.computer_per_capita.toLocaleString()} per capita)</dd>`;
-    html += `  <dt>Wireless sessions</dt><dd>${item.wireless_sessions.toLocaleString()} (${item.wifi_per_capita.toLocaleString()} per capita)</dd>`;
+    html += `  <dt>Items</dt><dd>${item.tot_phys_items.toLocaleString()} physical / ${item.tot_e_items.toLocaleString()} electronic</dd>`;
+    html += `  <dt>Visits</dt><dd>${item.visits.toLocaleString()} / ${item.visits_per_capita.toLocaleString()} (${item.visits_per_capita_score}) per capita</dd>`;
+    html += `  <dt>Total programs</dt><dd>${item.programs.toLocaleString()} / ${item.programs_per_capita.toLocaleString()} (${item.programs_per_capita_score}) per capita</dd>`;
+    html += `  <dt>Percent programs on-site</dt><dd>${item.perc_onsite_programs.toFixed(2)}%</dd>`;
+    html += `  <dt>Total program attendence</dt><dd>${item.program_attendance.toLocaleString()} / ${item.attendance_per_program.toLocaleString()} (${item.attendance_per_program_score}) per program</dd>`;
+    html += `  <dt>On-site program attendance</dt><dd>${item.onsite_program_attendance.toLocaleString()} / ${item.onsite_attendance_per_program.toFixed(2)} per program (${item.onsite_attendance_per_program_score})</dd>`;
+    html += `  <dt>Computer sessions</dt><dd>${item.computer_sessions.toLocaleString()} / ${item.computer_per_capita.toLocaleString()} (${item.computer_per_capita_score}) per capita</dd>`;
+    html += `  <dt>Wireless sessions</dt><dd>${item.wireless_sessions.toLocaleString()} / ${item.wifi_per_capita.toLocaleString()} (${item.wifi_per_capita_score}) per capita</dd>`;
     html += '</dl>';
     this.$metaDetails.innerHTML = html;
   }
@@ -281,16 +280,15 @@ export default class Map {
     const rows = [item].concat(item.similar.map((index) => data[index]));
     let html = '<table>';
     html +=
-      '<tr><th>&nbsp;</th><th>Name</th><th>Location</th><th>Income</th><th>% POC</th><th>Onsite engagment</th><th>Digital engagement</th></tr>';
+      '<tr><th>&nbsp;</th><th>Name</th><th>Location</th><th>Budget</th><th>Income</th><th>POC</th></tr>';
     rows.forEach((row, i) => {
       html += '<tr>';
       html += `<td>${i}.</td>`;
       html += `<td><button class="item-link" data-index="${row.originalIndex}">${row.name}</button></td>`;
       html += `<td>${row.city}, ${row.state}</td>`;
+      html += `<td>$${row.op_revenue.toLocaleString()}</td>`;
       html += `<td>$${row.income.toLocaleString()}</td>`;
       html += `<td>${row.perc_poc}%</td>`;
-      html += `<td>${row.physEngagementScore}</td>`;
-      html += `<td>${row.digiEngagementScore}</td>`;
       html += '</tr>';
     });
     html += '</table>';
