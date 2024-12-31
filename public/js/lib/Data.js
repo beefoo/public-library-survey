@@ -152,7 +152,7 @@ export default class Data {
           : 0;
       // add new fields for filters that are ranges
       filterBy.forEach((filter) => {
-        const { field, type, values, label } = filter;
+        const { field, type, values } = filter;
         let itemValue = field in row ? row[field] : -1;
         if (type === 'perc_range') {
           const [minValue, maxValue] = ranges[field];
@@ -341,7 +341,7 @@ export default class Data {
   static toPlusMinus(value, precision = 3) {
     let string = '';
     if (value > 0) string += '+';
-    string += value.toFixed(precision);
+    string += parseFloat(value.toFixed(precision)).toLocaleString();
     return string;
   }
 }
