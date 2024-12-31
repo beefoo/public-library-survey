@@ -280,7 +280,7 @@ h2.meta-title {
 }
 .meta-similar td {
   border-left: 1px solid #aaa;
-  padding: 0 2px;
+  padding: 2px 4px;
 }
 .meta-similar td:first-child {
   border-left: none;
