@@ -258,18 +258,18 @@ export default class Map {
     html += `  <dt>Percent POC (Census)</dt><dd>${item.perc_poc}% (${item.perc_poc_score}%)</dd>`;
     html += `  <dt>Percent Hispanic (Census)</dt><dd>${item.perc_hispanic}% (${item.perc_hispanic_score}%)</dd>`;
     html += `  <dt>Staff</dt><dd>${item.staff.toLocaleString()} (${item.librarians.toLocaleString()} librarians)</dd>`;
-    html += `  <dt>Revenue (operating)</dt><dd>$${item.op_revenue.toLocaleString()} / $${item.op_revenue_per_capita.toLocaleString()} (${item.op_revenue_per_capita_score}) per capita</dd>`;
+    html += `  <dt>Revenue (operating)</dt><dd>$${item.op_revenue.toLocaleString()} / $${item.op_revenue_per_capita.toLocaleString()} per capita (${item.op_revenue_per_capita_score})</dd>`;
     html += `  <dt>Revenue (capital)</dt><dd>$${item.cap_revenue.toLocaleString()}</dd>`;
     html += '</dl>';
     html += '<dl>';
     html += `  <dt>Items</dt><dd>${item.tot_phys_items.toLocaleString()} physical / ${item.tot_e_items.toLocaleString()} electronic</dd>`;
-    html += `  <dt>Visits</dt><dd>${item.visits.toLocaleString()} / ${item.visits_per_capita.toLocaleString()} (${item.visits_per_capita_score}) per capita</dd>`;
-    html += `  <dt>Total programs</dt><dd>${item.programs.toLocaleString()} / ${item.programs_per_capita.toLocaleString()} (${item.programs_per_capita_score}) per capita</dd>`;
+    html += `  <dt>Visits</dt><dd>${item.visits.toLocaleString()} / ${item.visits_per_capita.toLocaleString()} per capita (${item.visits_per_capita_score})</dd>`;
+    html += `  <dt>Total programs</dt><dd>${item.programs.toLocaleString()} / ${item.programs_per_capita.toLocaleString()} per capita (${item.programs_per_capita_score})</dd>`;
     html += `  <dt>Percent programs on-site</dt><dd>${item.perc_onsite_programs.toFixed(2)}%</dd>`;
-    html += `  <dt>Total program attendence</dt><dd>${item.program_attendance.toLocaleString()} / ${item.attendance_per_program.toLocaleString()} (${item.attendance_per_program_score}) per program</dd>`;
+    html += `  <dt>Total program attendence</dt><dd>${item.program_attendance.toLocaleString()} / ${item.attendance_per_program.toLocaleString()} per program (${item.attendance_per_program_score})</dd>`;
     html += `  <dt>On-site program attendance</dt><dd>${item.onsite_program_attendance.toLocaleString()} / ${item.onsite_attendance_per_program.toFixed(2)} per program (${item.onsite_attendance_per_program_score})</dd>`;
-    html += `  <dt>Computer sessions</dt><dd>${item.computer_sessions.toLocaleString()} / ${item.computer_per_capita.toLocaleString()} (${item.computer_per_capita_score}) per capita</dd>`;
-    html += `  <dt>Wireless sessions</dt><dd>${item.wireless_sessions.toLocaleString()} / ${item.wifi_per_capita.toLocaleString()} (${item.wifi_per_capita_score}) per capita</dd>`;
+    html += `  <dt>Computer sessions</dt><dd>${item.computer_sessions.toLocaleString()} / ${item.computer_per_capita.toLocaleString()} per capita (${item.computer_per_capita_score})</dd>`;
+    html += `  <dt>Wireless sessions</dt><dd>${item.wireless_sessions.toLocaleString()} / ${item.wifi_per_capita.toLocaleString()} per capita (${item.wifi_per_capita_score})</dd>`;
     html += '</dl>';
     this.$metaDetails.innerHTML = html;
   }
