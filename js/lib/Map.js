@@ -52,12 +52,12 @@ export default class Map {
   }
 
   filter(indices) {
-    const { opacity } = this.getMarkerProperties();
     this.markers.forEach((marker, i) => {
+      const wasVisible = marker.visible;
       const isVisible = indices.includes(i);
       this.markers[i].visible = isVisible;
-      if (isVisible) marker.el.setStyle({ fillOpacity: opacity });
-      else marker.el.setStyle({ fillOpacity: 0 });
+      if (isVisible && !wasVisible) marker.el.addTo(this.markerGroup);
+      else if (!isVisible && wasVisible) marker.el.removeFrom(this.markerGroup);
     });
   }
 
@@ -194,6 +194,7 @@ export default class Map {
       };
     });
     markerGroup.addTo(this.map);
+    this.markerGroup = markerGroup;
     if (this.selectedMarkerIndex >= 0)
       this.selectMarker(this.selectedMarkerIndex);
   }
