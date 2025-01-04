@@ -87,7 +87,10 @@ def find_where(df, key, value):
 def parse_int(value, default_value=-1):
     parsed_value = default_value
     try:
-        parsed_value = int(str(value).replace(",", "").replace("+", ""))
+        svalue = str(value).replace(",", "").replace("+", "")
+        if "." in svalue:
+            svalue = svalue.split(".")[0]
+        parsed_value = int(svalue)
     except:
         parsed_value = default_value
     return parsed_value

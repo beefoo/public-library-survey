@@ -17,19 +17,19 @@ def main():
     parser.add_argument(
         "-id",
         "--incomedata",
-        default="data/ACSDT5Y2023.B19013-Data-Houshold-Income-By-Zipcode.csv",
+        default="data/ACSDT5Y2023.B19013-Data-Household-Income-By-County.csv",
         help="Path to income data .csv file",
     )
     parser.add_argument(
         "-rd",
         "--racedata",
-        default="data/ACSDT5Y2023.B02001-Data-Race-By-Zipcode.csv",
+        default="data/ACSDT5Y2023.B02001-Data-Race-By-County.csv",
         help="Path to race data .csv file",
     )
     parser.add_argument(
         "-ed",
         "--ethnicitydata",
-        default="data/ACSDT5Y2023.B03003-Data-Hispanic-By-Zipcode.csv",
+        default="data/ACSDT5Y2023.B03003-Data-Hispanic-By-County.csv",
         help="Path to ethnicity data .csv file",
     )
     parser.add_argument(
@@ -40,6 +40,10 @@ def main():
     )
     parser.add_argument("-d", "--debug", action="store_true", help="Debug mode")
     args = parser.parse_args()
+
+    # Read zipcode data to retrieve county codes
+    zip_df = pd.read_csv("data/us_zip_fips_county.csv", encoding="latin-1")
+    zip_df = zip_df[["Zip Code", "FIPS Code"]]
 
     # Read all the data files
     lib_df = pd.read_csv(args.libdata, encoding="latin-1")
@@ -54,14 +58,27 @@ def main():
     ethnicity_df = pd.read_csv(args.ethnicitydata, skiprows=[1])
     print(f"Found {ethnicity_df.shape[0]:,} entries in {args.ethnicitydata}")
 
+    # Merge lib data with zipcode data to get count IDs
+    lib_df["ZIP"] = lib_df.apply(
+        lambda row: str(parse_int(row["ZIP"], 0)).zfill(5), axis=1
+    )
+    zip_df["ZIP"] = zip_df.apply(
+        lambda row: str(parse_int(row["Zip Code"], 0)).zfill(5), axis=1
+    )
+    lib_df = pd.merge(lib_df, zip_df, on="ZIP", how="left")
+
     # Parse census tract number
     # lib_df["GEO_ID"] = lib_df.apply(
     #     lambda row: f"1400000US{str(row['CENTRACT']).zfill(11)}", axis=1
     # )
-
     # Parse zipcode
+    # lib_df["GEO_ID"] = lib_df.apply(
+    #     lambda row: f"860Z200US{str(row['ZIP']).zfill(5)}", axis=1
+    # )
+
+    # Parse county ID (FIPS)
     lib_df["GEO_ID"] = lib_df.apply(
-        lambda row: f"860Z200US{str(row['ZIP']).zfill(5)}", axis=1
+        lambda row: f"0500000US{str(parse_int(row['FIPS Code'], 0)).zfill(5)}", axis=1
     )
 
     # Add link to URL
