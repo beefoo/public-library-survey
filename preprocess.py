@@ -15,24 +15,6 @@ def main():
         help="Path to library data .csv file",
     )
     parser.add_argument(
-        "-id",
-        "--incomedata",
-        default="data/ACSDT5Y2023.B19013-Data-Household-Income-By-County.csv",
-        help="Path to income data .csv file",
-    )
-    parser.add_argument(
-        "-rd",
-        "--racedata",
-        default="data/ACSDT5Y2023.B02001-Data-Race-By-County.csv",
-        help="Path to race data .csv file",
-    )
-    parser.add_argument(
-        "-ed",
-        "--ethnicitydata",
-        default="data/ACSDT5Y2023.B03003-Data-Hispanic-By-County.csv",
-        help="Path to ethnicity data .csv file",
-    )
-    parser.add_argument(
         "-out",
         "--outputfile",
         default="public/data/2022-library-data.json",
@@ -49,14 +31,8 @@ def main():
     lib_df = pd.read_csv(args.libdata, encoding="latin-1")
     print(f"Found {lib_df.shape[0]:,} entries in {args.libdata}")
 
-    income_df = pd.read_csv(args.incomedata, skiprows=[1])
-    print(f"Found {income_df.shape[0]:,} entries in {args.incomedata}")
-
-    race_df = pd.read_csv(args.racedata, skiprows=[1])
-    print(f"Found {race_df.shape[0]:,} entries in {args.racedata}")
-
-    ethnicity_df = pd.read_csv(args.ethnicitydata, skiprows=[1])
-    print(f"Found {ethnicity_df.shape[0]:,} entries in {args.ethnicitydata}")
+    income_county_df, race_county_df, ethnicity_county_df = get_census_data(by="County")
+    income_zip_df, race_zip_df, ethnicity_zip_df = get_census_data(by="Zipcode")
 
     # Merge lib data with zipcode data to get count IDs
     lib_df["ZIP"] = lib_df.apply(
@@ -76,10 +52,17 @@ def main():
     #     lambda row: f"860Z200US{str(row['ZIP']).zfill(5)}", axis=1
     # )
 
-    # Parse county ID (FIPS)
-    lib_df["GEO_ID"] = lib_df.apply(
-        lambda row: f"0500000US{str(parse_int(row['FIPS Code'], 0)).zfill(5)}", axis=1
+    # Merge all the data
+    lib_df = merge_data(
+        lib_df,
+        income_county_df,
+        race_county_df,
+        ethnicity_county_df,
+        income_zip_df,
+        race_zip_df,
+        ethnicity_zip_df,
     )
+    print(f"Found {lib_df.shape[0]:,} entries after merging")
 
     # Add link to URL
     lib_df["GEO_URL"] = lib_df.apply(
@@ -106,12 +89,12 @@ def main():
     # )
 
     # Parse income
-    income_df["MEDIAN_INCOME"] = income_df.apply(
+    lib_df["MEDIAN_INCOME"] = lib_df.apply(
         lambda row: parse_int(row["B19013_001E"]), axis=1
     )
 
     # Calculate percentage race
-    race_df["RACES_TOTAL"] = race_df.apply(
+    lib_df["RACES_TOTAL"] = lib_df.apply(
         lambda row: row["B02001_002E"]
         + row["B02001_003E"]
         + row["B02001_004E"]
@@ -120,7 +103,7 @@ def main():
         + row["B02001_007E"],
         axis=1,
     )
-    race_df["PERC_WHITE"] = race_df.apply(
+    lib_df["PERC_WHITE"] = lib_df.apply(
         lambda row: (
             round(row["B02001_002E"] / row["RACES_TOTAL"] * 100, 2)
             if row["RACES_TOTAL"] > 0
@@ -128,7 +111,7 @@ def main():
         ),
         axis=1,
     )
-    race_df["PERC_POC"] = race_df.apply(
+    lib_df["PERC_POC"] = lib_df.apply(
         lambda row: (
             round(
                 (
@@ -149,7 +132,7 @@ def main():
     )
 
     # Calculate percentage hispanic
-    ethnicity_df["PERC_HISPANIC"] = ethnicity_df.apply(
+    lib_df["PERC_HISPANIC"] = lib_df.apply(
         lambda row: (
             round(
                 row["B03003_003E"] / (row["B03003_002E"] + row["B03003_003E"]) * 100, 2
@@ -159,12 +142,6 @@ def main():
         ),
         axis=1,
     )
-
-    # Merge all the data
-    lib_df = pd.merge(lib_df, income_df, on="GEO_ID", how="left")
-    lib_df = pd.merge(lib_df, race_df, on="GEO_ID", how="left")
-    lib_df = pd.merge(lib_df, ethnicity_df, on="GEO_ID", how="left")
-    print(f"Found {lib_df.shape[0]:,} entries after merging")
 
     # Add merged POC or Hispanic
     lib_df["PERC_POC_OR_HISPANIC"] = lib_df.apply(
