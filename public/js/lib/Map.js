@@ -246,7 +246,7 @@ export default class Map {
       'locale_type',
     );
     const localeType = Helper.where(
-      localeTypeFilter.values,
+      Config.localeTypes,
       'value',
       item.locale_type,
     );
