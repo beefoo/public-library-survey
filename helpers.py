@@ -1,4 +1,7 @@
+import itertools
+from operator import itemgetter
 import pandas as pd
+from tqdm import tqdm
 
 
 def calculate_per(df, value_key, total_key, new_key):
@@ -132,24 +135,44 @@ def get_election_data(path="data/", year=2020):
         f"Found {election_df.shape[0]:,} entries in the presidential elections dataset"
     )
 
-    # Filter by year and party
-    dem_df = election_df[
-        (election_df["year"] == year)
-        & (election_df["party"] == "DEMOCRAT")
-        & (election_df["mode"] == "TOTAL")
-    ].reset_index(drop=True)
-    rep_df = election_df[
-        (election_df["year"] == year)
-        & (election_df["party"] == "REPUBLICAN")
-        & (election_df["mode"] == "TOTAL")
-    ].reset_index(drop=True)
-    print(f"Found {dem_df.shape[0]:,} entries in the {year} election cycle")
+    # Filter by year
+    election_df = election_df[election_df["year"] == year].reset_index(drop=True)
+    election_df["county_fips"] = election_df.apply(
+        lambda row: parse_int(row["county_fips"], 0), axis=1
+    )
 
-    # Merge the two
-    dem_df.rename(columns={"candidatevotes": "demvotes"}, inplace=True)
-    rep_df.rename(columns={"candidatevotes": "repvotes"}, inplace=True)
-    rep_df = rep_df[["repvotes", "county_fips"]]
-    combined_df = pd.merge(dem_df, rep_df, on="county_fips", how="left")
+    # Get a list of unique counties
+    counties = list(set(election_df["county_fips"].to_list()))
+    print(f"Found {len(counties)} counties with data for year {year}")
+
+    print("Parsing election data...")
+    election_data = []
+    for county in tqdm(counties):
+        record = {"county_fips": county}
+        county_df = election_df[election_df["county_fips"] == county]
+        # Check to see if there are totals
+        totals_df = county_df[county_df["mode"] == "TOTAL"]
+        if totals_df.shape[0] > 0:
+            record["demvotes"] = totals_df.loc[
+                totals_df["party"] == "DEMOCRAT", "candidatevotes"
+            ].values[0]
+            record["repvotes"] = totals_df.loc[
+                totals_df["party"] == "REPUBLICAN", "candidatevotes"
+            ].values[0]
+            record["totalvotes"] = totals_df["totalvotes"].values[0]
+        # Otherwise, aggregate all columns
+        else:
+            record["demvotes"] = county_df.loc[
+                county_df["party"] == "DEMOCRAT", "candidatevotes"
+            ].sum()
+            record["repvotes"] = county_df.loc[
+                county_df["party"] == "REPUBLICAN", "candidatevotes"
+            ].sum()
+            record["totalvotes"] = county_df["totalvotes"].values[0]
+        election_data.append(record)
+
+    # Convert back to data frame
+    combined_df = pd.DataFrame(election_data)
 
     # Calculate percentages (negative for dem, positive for rep-leaning)
     combined_df["vote_points"] = combined_df.apply(
@@ -161,9 +184,25 @@ def get_election_data(path="data/", year=2020):
         axis=1,
     )
 
-    return combined_df[
-        ["county_fips", "demvotes", "repvotes", "totalvotes", "vote_points"]
-    ]
+    return combined_df
+
+
+def group_list(arr, groupBy, sort=False, desc=True):
+    """Group a list by value"""
+    groups = []
+    arr = sorted(arr, key=itemgetter(*groupBy))
+    for key, items in itertools.groupby(arr, key=itemgetter(*groupBy)):
+        group = {}
+        litems = list(items)
+        count = len(litems)
+        group["groupKey"] = tuple(groupBy)
+        group["items"] = litems
+        group["count"] = count
+        groups.append(group)
+    if sort:
+        isReversed = desc
+        groups = sorted(groups, key=lambda k: k["count"], reverse=isReversed)
+    return groups
 
 
 def merge_data(
