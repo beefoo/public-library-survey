@@ -65,6 +65,15 @@ export default class Map {
     return document.querySelector('input[name="color-by"]:checked').value;
   }
 
+  static getElectionString(item) {
+    let electionString = 'Unknown';
+    if (item.vote_points < 0)
+      electionString = `<span style="color: blue">+${Math.abs(item.vote_points)} Dem</span>`;
+    else if (item.vote_points > 0)
+      electionString = `<span style="color: red">+${item.vote_points} Rep</span>`;
+    return electionString;
+  }
+
   getMarkerProperties() {
     const { minZoom, maxZoom, markerOpacity, markerRadius } = this.options;
     const zoom = this.map.getZoom();
@@ -250,11 +259,7 @@ export default class Map {
       'value',
       item.locale_type,
     );
-    let electionString = 'Unknown';
-    if (item.vote_points < 0)
-      electionString = `<span style="color: blue">+${Math.abs(item.vote_points)} Dem</span>`;
-    else if (item.vote_points > 0)
-      electionString = `<span style="color: red">+${item.vote_points} Rep</span>`;
+    const electionString = this.constructor.getElectionString(item);
     let html = '';
     html += '<dl>';
     html += `  <dt>Address</dt><dd><a href="${item.geo_url}" target="_blank">${item.address}, ${item.city}, ${item.state}</a></dd>`;
@@ -287,15 +292,25 @@ export default class Map {
     const rows = [item].concat(item.similar.map((index) => data[index]));
     let html = '<table>';
     html +=
-      '<tr><th>&nbsp;</th><th>Name</th><th>Location</th><th>Budget</th><th>Income</th><th>POC</th></tr>';
+      '<tr><th>&nbsp;</th><th>Name</th><th>Location</th><th>Region</th><th>Locale type</th><th>Budget</th><th>Income</th><th>POC</th><th>2020 Election</th></tr>';
     rows.forEach((row, i) => {
+      const localeType = Helper.where(
+        Config.localeTypes,
+        'value',
+        row.locale_type,
+      );
+      const region = Helper.where(Config.regions, 'value', row.region);
+      const electionString = this.constructor.getElectionString(row);
       html += '<tr>';
       html += `<td>${i}.</td>`;
       html += `<td><button class="item-link" data-index="${row.originalIndex}">${row.name}</button></td>`;
       html += `<td>${row.city}, ${row.state}</td>`;
+      html += `<td>${region.label}</td>`;
+      html += `<td>${localeType.label}</td>`;
       html += `<td>$${row.op_revenue.toLocaleString()}</td>`;
       html += `<td>$${row.income.toLocaleString()}</td>`;
       html += `<td>${row.perc_poc}%</td>`;
+      html += `<td>${electionString}</td>`;
       html += '</tr>';
     });
     html += '</table>';

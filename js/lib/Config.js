@@ -325,6 +325,18 @@ const Config = {
     { value: 42, label: 'Distant rural' },
     { value: 43, label: 'Remote rural' },
   ],
+
+  regions: [
+    { value: 1, label: 'New England' },
+    { value: 2, label: 'Mid East' },
+    { value: 3, label: 'Great Lakes' },
+    { value: 4, label: 'Plains' },
+    { value: 5, label: 'Southeast' },
+    { value: 6, label: 'Southwest' },
+    { value: 7, label: 'Rocky Mountains' },
+    { value: 8, label: 'Far West' },
+    { value: 9, label: 'Outlying Areas' },
+  ],
 };
 
 export default Config;
