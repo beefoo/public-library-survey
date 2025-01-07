@@ -260,7 +260,7 @@ export default class Map {
     html += `  <dt>Address</dt><dd><a href="${item.geo_url}" target="_blank">${item.address}, ${item.city}, ${item.state}</a></dd>`;
     html += `  <dt>Service area population</dt><dd>${item.pop_lsa.toLocaleString()}</dd>`;
     html += `  <dt>Locale type</dt><dd>${localeType.label}</dd>`;
-    html += `  <dt>2020 Pres Election</dt><dd>${electionString}</dd>`;
+    html += `  <dt>2020 Pres Election (MIT)</dt><dd>${electionString}</dd>`;
     html += `  <dt>Median household income (Census)</dt><dd>$${item.income.toLocaleString()} (${item.income_score.toLocaleString()})</dd>`;
     html += `  <dt>Percent POC (Census)</dt><dd>${item.perc_poc}% (${item.perc_poc_score}%)</dd>`;
     html += `  <dt>Percent Hispanic (Census)</dt><dd>${item.perc_hispanic}% (${item.perc_hispanic_score}%)</dd>`;
