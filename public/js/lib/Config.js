@@ -142,6 +142,18 @@ const Config = {
         { minValue: 0, maxValue: 10, label: 'Less than 10%' },
       ],
     },
+    {
+      label: '2020 Presidential Election',
+      field: 'vote_points',
+      type: 'range',
+      values: [
+        { minValue: 20, maxValue: 100, label: 'Solid Republican' },
+        { minValue: 5, maxValue: 20, label: 'Lean Republican' },
+        { minValue: -5, maxValue: 5, label: 'Toss up' },
+        { minValue: -20, maxValue: -5, label: 'Lean Democrat' },
+        { minValue: -100, maxValue: -20, label: 'Solid Democrat' },
+      ],
+    },
   ],
 
   sortBy: [
@@ -268,6 +280,13 @@ const Config = {
       field: 'perc_hispanic',
       type: 'quant',
       minValue: 0,
+      maxValue: 100,
+    },
+    {
+      label: '2020 Presidential Election',
+      field: 'vote_points',
+      type: 'quant',
+      minValue: -100,
       maxValue: 100,
     },
   ],

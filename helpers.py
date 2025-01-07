@@ -126,6 +126,46 @@ def get_census_value(row, field, census_county, census_zip):
     return value
 
 
+def get_election_data(path="data/", year=2020):
+    election_df = pd.read_csv(f"{path}countypres_2000-2020.csv")
+    print(
+        f"Found {election_df.shape[0]:,} entries in the presidential elections dataset"
+    )
+
+    # Filter by year and party
+    dem_df = election_df[
+        (election_df["year"] == year)
+        & (election_df["party"] == "DEMOCRAT")
+        & (election_df["mode"] == "TOTAL")
+    ].reset_index(drop=True)
+    rep_df = election_df[
+        (election_df["year"] == year)
+        & (election_df["party"] == "REPUBLICAN")
+        & (election_df["mode"] == "TOTAL")
+    ].reset_index(drop=True)
+    print(f"Found {dem_df.shape[0]:,} entries in the {year} election cycle")
+
+    # Merge the two
+    dem_df.rename(columns={"candidatevotes": "demvotes"}, inplace=True)
+    rep_df.rename(columns={"candidatevotes": "repvotes"}, inplace=True)
+    rep_df = rep_df[["repvotes", "county_fips"]]
+    combined_df = pd.merge(dem_df, rep_df, on="county_fips", how="left")
+
+    # Calculate percentages (negative for dem, positive for rep-leaning)
+    combined_df["vote_points"] = combined_df.apply(
+        lambda row: round(
+            (row["repvotes"] / row["totalvotes"] - row["demvotes"] / row["totalvotes"])
+            * 100,
+            2,
+        ),
+        axis=1,
+    )
+
+    return combined_df[
+        ["county_fips", "demvotes", "repvotes", "totalvotes", "vote_points"]
+    ]
+
+
 def merge_data(
     lib_df,
     income_county_df,
@@ -134,10 +174,14 @@ def merge_data(
     income_zip_df,
     race_zip_df,
     ethnicity_zip_df,
+    election_df,
 ):
     # Add Geo ID's to use to merge with Census data
     lib_df["GEO_ID_COUNTY"] = lib_df.apply(
         lambda row: f"0500000US{str(parse_int(row['FIPS Code'], 0)).zfill(5)}", axis=1
+    )
+    election_df["GEO_ID_COUNTY"] = election_df.apply(
+        lambda row: f"0500000US{str(parse_int(row['county_fips'], 0)).zfill(5)}", axis=1
     )
     lib_df["GEO_ID_ZIPCODE"] = lib_df.apply(
         lambda row: f"860Z200US{str(parse_int(row['ZIP'], 0)).zfill(5)}", axis=1
@@ -175,6 +219,10 @@ def merge_data(
             lambda row: get_census_value(row, field, census_county, census_zip),
             axis=1,
         )
+
+    # Merge the elections data
+    lib_df = pd.merge(lib_df, election_df, on="GEO_ID_COUNTY", how="left")
+
     return lib_df
 
 

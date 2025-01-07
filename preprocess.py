@@ -27,12 +27,16 @@ def main():
     zip_df = pd.read_csv("data/us_zip_fips_county.csv", encoding="latin-1")
     zip_df = zip_df[["Zip Code", "FIPS Code"]]
 
-    # Read all the data files
+    # Read the library data
     lib_df = pd.read_csv(args.libdata, encoding="latin-1")
     print(f"Found {lib_df.shape[0]:,} entries in {args.libdata}")
 
+    # Read the Census data
     income_county_df, race_county_df, ethnicity_county_df = get_census_data(by="County")
     income_zip_df, race_zip_df, ethnicity_zip_df = get_census_data(by="Zipcode")
+
+    # Read the elections data
+    election_df = get_election_data()
 
     # Merge lib data with zipcode data to get count IDs
     lib_df["ZIP"] = lib_df.apply(
@@ -61,6 +65,7 @@ def main():
         income_zip_df,
         race_zip_df,
         ethnicity_zip_df,
+        election_df,
     )
     print(f"Found {lib_df.shape[0]:,} entries after merging")
 
@@ -196,6 +201,7 @@ def main():
         "ATTEN_PER_N": "attendance_per_program_norm",
         "COMP_PER_N": "computer_per_capita_norm",
         "WIFI_PER_N": "wifi_per_capita_norm",
+        "vote_points": "vote_points",
         # "B02001_001E": "population",
         # "B02001_002E": "pop_white",
         # "B02001_003E": "pop_black",
