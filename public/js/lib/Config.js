@@ -143,7 +143,7 @@ const Config = {
       ],
     },
     {
-      label: '2020 Presidential Election',
+      label: '2020 Presidential Election (MIT)',
       field: 'vote_points',
       type: 'range',
       values: [
@@ -162,6 +162,16 @@ const Config = {
       label: 'Name (A-Z)',
       direction: 'asc',
       isalpha: 1,
+    },
+    {
+      field: 'pop_lsa',
+      label: 'Number of people served (high to low)',
+      direction: 'desc',
+    },
+    {
+      field: 'pop_lsa',
+      label: 'Number of people served (low to high)',
+      direction: 'asc',
     },
     {
       field: 'visits_per_capita_norm',
@@ -189,6 +199,16 @@ const Config = {
       direction: 'desc',
     },
     {
+      field: 'op_revenue',
+      label: 'Operating revenue (high to low)',
+      direction: 'desc',
+    },
+    {
+      field: 'op_revenue',
+      label: 'Operating revenue (low to high)',
+      direction: 'asc',
+    },
+    {
       field: 'op_revenue_per_capita',
       label: 'Op revenue per capita (high to low)',
       direction: 'desc',
@@ -200,7 +220,7 @@ const Config = {
     },
     {
       field: 'perc_poc_or_hispanic',
-      label: 'Percent POC or Hispanic (high to low)',
+      label: 'Percent POC (high to low)',
       direction: 'desc',
     },
     {
@@ -283,7 +303,7 @@ const Config = {
       maxValue: 100,
     },
     {
-      label: '2020 Presidential Election',
+      label: '2020 Presidential Election <small><em>(MIT)</em></small>',
       field: 'vote_points',
       type: 'quant',
       minValue: -100,
