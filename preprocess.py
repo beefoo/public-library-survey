@@ -116,6 +116,32 @@ def main():
         ),
         axis=1,
     )
+    lib_df["PERC_BLACK"] = lib_df.apply(
+        lambda row: (
+            round(row["B02001_003E"] / row["RACES_TOTAL"] * 100, 2)
+            if row["RACES_TOTAL"] > 0
+            else 0
+        ),
+        axis=1,
+    )
+    lib_df["PERC_INDIGENOUS"] = lib_df.apply(
+        lambda row: (
+            round(row["B02001_004E"] / row["RACES_TOTAL"] * 100, 2)
+            if row["RACES_TOTAL"] > 0
+            else 0
+        ),
+        axis=1,
+    )
+    lib_df["PERC_API"] = lib_df.apply(
+        lambda row: (
+            round(
+                (row["B02001_005E"] + row["B02001_006E"]) / row["RACES_TOTAL"] * 100, 2
+            )
+            if row["RACES_TOTAL"] > 0
+            else 0
+        ),
+        axis=1,
+    )
     lib_df["PERC_POC"] = lib_df.apply(
         lambda row: (
             round(
@@ -186,6 +212,9 @@ def main():
         "CDCODE": "district",
         "MEDIAN_INCOME": "income",
         "PERC_WHITE": "perc_white",
+        "PERC_BLACK": "perc_black",
+        "PERC_INDIGENOUS": "perc_indigenous",
+        "PERC_API": "perc_api",
         "PERC_POC": "perc_poc",
         "PERC_HISPANIC": "perc_hispanic",
         "PERC_POC_OR_HISPANIC": "perc_poc_or_hispanic",
