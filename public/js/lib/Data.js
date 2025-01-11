@@ -23,6 +23,7 @@ export default class Data {
     this.filters = this.options.filters;
     this.$results = document.getElementById('tab-results');
     this.$filters = document.getElementById('tab-filters');
+    this.autoFields = {};
   }
 
   applyFiltersAndSort() {
@@ -63,6 +64,22 @@ export default class Data {
     this.renderFacets();
     this.options.onFilter();
     this.options.onChangeState();
+  }
+
+  getAutoFieldValues(field) {
+    if (field in this.autoFields) return this.autoFields[field];
+    const allValues = this.items.map((item) => item[field]);
+    const uniqueValues = allValues
+      .filter((item, i, arr) => arr.indexOf(item) === i)
+      .sort();
+    const fieldValues = uniqueValues.map((value) => {
+      return {
+        label: value,
+        value,
+      };
+    });
+    this.autoFields[field] = fieldValues;
+    return fieldValues;
   }
 
   getResultMessage() {
@@ -244,7 +261,13 @@ export default class Data {
     const { filters, results } = this;
     const { filterBy } = Config;
     const { $filters } = this;
-    const filtersWithCounts = filterBy.slice();
+    const filtersWithCounts = filterBy.map((item) => {
+      const newItem = structuredClone(item);
+      if (newItem.values === 'auto') {
+        newItem.values = this.getAutoFieldValues(item.field);
+      }
+      return newItem;
+    });
 
     // initialize counts
     filtersWithCounts.forEach((filter, i) => {
@@ -314,7 +337,7 @@ export default class Data {
         const fieldLookup = field.replace('filter-', '');
         const filter = Helper.where(Config.filterBy, 'field', fieldLookup);
         let label = value;
-        if (filter.type === 'value') {
+        if (filter.type === 'value' && filter.values !== 'auto') {
           const v = Helper.where(filter.values, 'value', value);
           label = v.label;
         }

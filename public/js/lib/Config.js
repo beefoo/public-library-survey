@@ -11,6 +11,12 @@ const Config = {
       ],
     },
     {
+      label: 'State',
+      field: 'state',
+      type: 'value',
+      values: 'auto',
+    },
+    {
       label: 'Region',
       field: 'region',
       type: 'value',
