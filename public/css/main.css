@@ -197,7 +197,7 @@ button.tab-button:hover {
 }
 .meta.active {
   display: block;
-  z-index: 1000;
+  z-index: 1003;
 }
 .meta-head {
   background: #111;
@@ -216,6 +216,11 @@ h2.meta-title {
 .meta-menu,
 .panel-tab {
   display: none;
+}
+.meta .panel-tab {
+  max-height: 60vh;
+  overflow: hidden;
+  overflow-y: auto;
 }
 .meta.active.selected .meta-menu {
   display: block;
