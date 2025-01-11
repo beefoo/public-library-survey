@@ -9,7 +9,7 @@ export default class Data {
       onChangeState: () => {},
       onClickResult: (_index) => {},
       onFilter: () => {},
-      sortBy: 'name',
+      sortBy: 'name-asc',
       similarity: 'data/2022-library-data-similarity.json',
       src: 'data/2022-library-data.json',
     };
@@ -27,6 +27,7 @@ export default class Data {
 
   applyFiltersAndSort() {
     const { filters, sortBy } = this;
+    const [sortByField, sortDirection] = sortBy.split('-', 2);
     this.results = this.items.filter((row) => {
       let valid = true;
       for (const [field, value] of Object.entries(filters)) {
@@ -37,11 +38,13 @@ export default class Data {
     const sorter = Helper.where(Config.sortBy, 'field', sortBy);
     this.results.sort((a, b) => {
       if ('isalpha' in sorter) {
-        return a[sortBy].toLowerCase().localeCompare(b[sortBy].toLowerCase());
+        return a[sortByField]
+          .toLowerCase()
+          .localeCompare(b[sortByField].toLowerCase());
       }
-      return sorter.direction === 'asc'
-        ? a[sortBy] - b[sortBy]
-        : b[sortBy] - a[sortBy];
+      return sortDirection === 'asc'
+        ? a[sortByField] - b[sortByField]
+        : b[sortByField] - a[sortByField];
     });
   }
 
@@ -121,6 +124,7 @@ export default class Data {
     this.sortBy = $sortBy.value;
     this.applyFiltersAndSort();
     this.renderResults();
+    this.options.onChangeState();
   }
 
   onClickResult($button) {
@@ -196,7 +200,10 @@ export default class Data {
     // calculate +/- median values
     const scoreColumns = [
       'income',
-      'perc_poc',
+      'perc_white',
+      'perc_black',
+      'perc_indigenous',
+      'perc_api',
       'perc_hispanic',
       'op_revenue_per_capita',
       'visits_per_capita',
