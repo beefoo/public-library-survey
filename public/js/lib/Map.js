@@ -296,7 +296,7 @@ export default class Map {
     const rows = [item].concat(item.similar.map((index) => data[index]));
     let html = '<table>';
     html +=
-      '<tr><th>&nbsp;</th><th>Name</th><th>Location</th><th>Region</th><th>Locale type</th><th>Budget</th><th>Income</th><th>POC</th><th>2020 Election</th></tr>';
+      '<tr><th>&nbsp;</th><th>Name</th><th>Location</th><th>Region</th><th>Locale type</th><th>Household Income</th><th>White</th><th>Black</th><th>Hispanic</th><th>Indigenous</th><th>Asian</th><th>2020 Election</th></tr>';
     rows.forEach((row, i) => {
       const localeType = Helper.where(
         Config.localeTypes,
@@ -311,9 +311,12 @@ export default class Map {
       html += `<td>${row.city}, ${row.state}</td>`;
       html += `<td>${region.label}</td>`;
       html += `<td>${localeType.label}</td>`;
-      html += `<td>$${row.op_revenue.toLocaleString()}</td>`;
       html += `<td>$${row.income.toLocaleString()}</td>`;
-      html += `<td>${row.perc_poc}%</td>`;
+      html += `<td>${row.perc_white}%</td>`;
+      html += `<td>${row.perc_black}%</td>`;
+      html += `<td>${row.perc_hispanic}%</td>`;
+      html += `<td>${row.perc_indigenous}%</td>`;
+      html += `<td>${row.perc_api}%</td>`;
       html += `<td>${electionString}</td>`;
       html += '</tr>';
     });

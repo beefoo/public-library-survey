@@ -29,6 +29,41 @@ def calculate_percent_pos(lib_df):
         axis=1,
     )
 
+    lib_df["PERC_WHITE"] = lib_df.apply(
+        lambda row: (
+            round(row["B02001_002E"] / row["RACES_TOTAL"] * 100, 2)
+            if row["RACES_TOTAL"] > 0
+            else 0
+        ),
+        axis=1,
+    )
+    lib_df["PERC_BLACK"] = lib_df.apply(
+        lambda row: (
+            round(row["B02001_003E"] / row["RACES_TOTAL"] * 100, 2)
+            if row["RACES_TOTAL"] > 0
+            else 0
+        ),
+        axis=1,
+    )
+    lib_df["PERC_INDIGENOUS"] = lib_df.apply(
+        lambda row: (
+            round(row["B02001_004E"] / row["RACES_TOTAL"] * 100, 2)
+            if row["RACES_TOTAL"] > 0
+            else 0
+        ),
+        axis=1,
+    )
+    lib_df["PERC_API"] = lib_df.apply(
+        lambda row: (
+            round(
+                (row["B02001_005E"] + row["B02001_006E"]) / row["RACES_TOTAL"] * 100, 2
+            )
+            if row["RACES_TOTAL"] > 0
+            else 0
+        ),
+        axis=1,
+    )
+
     # Calculate the percent that are people of color
     lib_df["PERC_POC"] = lib_df.apply(
         lambda row: (
@@ -135,6 +170,9 @@ def get_election_data(path="data/", year=2020):
         f"Found {election_df.shape[0]:,} entries in the presidential elections dataset"
     )
 
+    # Fill NAN
+    election_df.fillna({"candidatevotes": 0, "totalvotes": 0}, inplace=True)
+
     # Filter by year
     election_df = election_df[election_df["year"] == year].reset_index(drop=True)
     election_df["county_fips"] = election_df.apply(
@@ -176,10 +214,17 @@ def get_election_data(path="data/", year=2020):
 
     # Calculate percentages (negative for dem, positive for rep-leaning)
     combined_df["vote_points"] = combined_df.apply(
-        lambda row: round(
-            (row["repvotes"] / row["totalvotes"] - row["demvotes"] / row["totalvotes"])
-            * 100,
-            2,
+        lambda row: (
+            round(
+                (
+                    row["repvotes"] / row["totalvotes"]
+                    - row["demvotes"] / row["totalvotes"]
+                )
+                * 100,
+                2,
+            )
+            if row["totalvotes"] > 0
+            else 0
         ),
         axis=1,
     )
