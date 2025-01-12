@@ -22,7 +22,7 @@ export default class Data {
     this.sortBy = this.options.sortBy;
     this.filters = this.options.filters;
     this.$results = document.getElementById('tab-results');
-    this.$filters = document.getElementById('tab-filters');
+    this.$filters = document.getElementById('filters-content');
     this.autoFields = {};
   }
 

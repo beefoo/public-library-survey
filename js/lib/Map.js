@@ -142,7 +142,7 @@ export default class Map {
       }
     });
     // render options
-    const parent = document.getElementById('tab-colors');
+    const parent = document.getElementById('colors-content');
     let html = '';
     options.forEach((opt, i) => {
       const checked = opt.field === colorBy ? ' checked' : '';
