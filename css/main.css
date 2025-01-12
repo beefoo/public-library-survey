@@ -167,8 +167,14 @@ button.tab-button:hover {
   display: flex;
   z-index: 1000;
 }
+#quant-key-label-left::after {
+  content: ' ←';
+}
 #quant-key-label-right {
   color: white;
+}
+#quant-key-label-right::before {
+  content: '→ ';
 }
 
 .reset-button {
