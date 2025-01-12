@@ -301,3 +301,15 @@ h2.meta-title {
   margin: 1rem 0 2rem;
   font-size: 1.5rem;
 }
+#search-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+#tab-info ul {
+  margin: 0 0 0 1.5rem;
+  padding: 0;
+}
+#tab-info li {
+  margin: 1rem 0 0 0;
+}
