@@ -296,3 +296,8 @@ h2.meta-title {
 .meta-similar td:first-child {
   border-left: none;
 }
+
+#search-form {
+  margin: 1rem 0 2rem;
+  font-size: 1.5rem;
+}

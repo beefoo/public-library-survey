@@ -3,6 +3,7 @@ import Data from './Data.js';
 import Helper from './Helper.js';
 import Map from './Map.js';
 import Panel from './Panel.js';
+import Search from './Search.js';
 
 export default class App {
   constructor(options = {}) {
@@ -34,8 +35,15 @@ export default class App {
     });
     this.data = new Data(dataOptions);
     this.panel = new Panel();
+    this.search = new Search({
+      onClickResult: (index) => {
+        this.map.selectMarker(index);
+        this.map.jumpToMarker(index);
+      },
+    });
     await this.data.load();
     this.data.renderFacets();
+    this.search.setData(this.data.items);
     this.map.setData(this.data.items);
     this.map.loadMarkers();
     this.map.loadColorOptions(Config.colorBy);

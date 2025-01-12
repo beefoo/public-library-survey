@@ -30,6 +30,9 @@
           <button id="button-colors" class="tab-button" data-tab="tab-colors">
             Color by
           </button>
+          <button id="button-search" class="tab-button" data-tab="tab-search">
+            Search
+          </button>
         </div>
         <div class="panel-tabs">
           <div id="tab-results" class="panel-tab active">
@@ -37,6 +40,14 @@
           </div>
           <div id="tab-filters" class="panel-tab"></div>
           <div id="tab-colors" class="panel-tab"></div>
+          <div id="tab-search" class="panel-tab">
+            <form id="search-form">
+              <input type="text" name="search" id="search-input" />
+              <button type="submit">Search</button>
+            </form>
+
+            <ul id="search-result-list" class="result-list"></ul>
+          </div>
         </div>
       </div>
       <div class="viewer">
