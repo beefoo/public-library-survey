@@ -151,6 +151,7 @@ button.tab-button:hover {
 .key {
   position: absolute;
   width: 600px;
+  max-width: 87%;
   height: 30px;
   top: 12px;
   right: 12px;
@@ -225,8 +226,7 @@ h2.meta-title {
 }
 .meta .panel-tab {
   max-height: 60vh;
-  overflow: hidden;
-  overflow-y: auto;
+  overflow: auto;
 }
 .meta.active.selected .meta-menu {
   display: block;
@@ -247,7 +247,7 @@ h2.meta-title {
   position: absolute;
   top: 6px;
   right: 12px;
-  background: black;
+  background: rgb(146, 51, 0);
   color: white;
   font-weight: bold;
   border: none;
@@ -265,7 +265,7 @@ h2.meta-title {
   transform: rotate(180deg);
 }
 .close-details:hover {
-  background-color: #333;
+  background-color: rgb(172, 60, 0);
 }
 .meta.active.selected .close-details {
   transform: rotate(0deg);
