@@ -235,7 +235,6 @@ export default class Data {
     ];
     const medianValues = {};
     scoreColumns.forEach((col) => {
-      if (col === 'median_age') console.log(items.map((item) => item[col]));
       medianValues[col] = Helper.medianList(items.map((item) => item[col]));
     });
     items.forEach((item, i) => {
