@@ -41,6 +41,9 @@ export default class Map {
     this.$metaTitle = document.getElementById('meta-title');
     this.$metaDetails = document.getElementById('meta-details');
     this.$metaSimilar = document.getElementById('meta-similar');
+    this.$keyLabel = document.getElementById('quant-key-label');
+    this.$keyLabelLeft = document.getElementById('quant-key-label-left');
+    this.$keyLabelRight = document.getElementById('quant-key-label-right');
     this.loadMap();
   }
 
@@ -273,6 +276,10 @@ export default class Map {
     html += `  <dd>Hispanic / Latino: ${item.perc_hispanic}% (${item.perc_hispanic_score}%)</dd>`;
     html += `  <dd>Indigenous: ${item.perc_indigenous}% (${item.perc_indigenous_score}%)</dd>`;
     html += `  <dd>Asian / Pacific Islander ${item.perc_api}% (${item.perc_api_score}%)</dd>`;
+    html += `  <dt>Age (Census)</dt>`;
+    html += `  <dd>Median age: ${item.median_age} (${item.median_age_score})</dd>`;
+    html += `  <dd>Under 18: ${item.perc_minor}% (${item.perc_minor_score}%)</dd>`;
+    html += `  <dd>65 and older: ${item.perc_senior}% (${item.perc_senior_score}%)</dd>`;
     html += '</dl>';
     html += '<dl>';
     html += `  <dt>Staff</dt><dd>${item.staff.toLocaleString()} (${item.librarians.toLocaleString()} librarians)</dd>`;
@@ -356,13 +363,18 @@ export default class Map {
   }
 
   updateColors(colorOptionKey) {
-    const label = document.getElementById('quant-key-label');
     const colorOption = Helper.where(
       this.colorOptions,
       'field',
       colorOptionKey,
     );
-    if (colorOption) label.innerHTML = colorOption.label;
+    if (colorOption) {
+      this.$keyLabel.innerHTML = colorOption.label;
+      this.$keyLabelLeft.innerHTML =
+        'labelLeft' in colorOption ? colorOption.labelLeft : 'Less';
+      this.$keyLabelRight.innerHTML =
+        'labelRight' in colorOption ? colorOption.labelRight : 'More';
+    }
     this.markers.forEach((marker) => {
       const color = marker.colors[colorOptionKey];
       marker.el.setStyle({ fillColor: color });

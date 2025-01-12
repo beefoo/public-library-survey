@@ -222,6 +222,9 @@ export default class Data {
       'perc_indigenous',
       'perc_api',
       'perc_hispanic',
+      'perc_minor',
+      'perc_senior',
+      'median_age',
       'op_revenue_per_capita',
       'visits_per_capita',
       'programs_per_capita',
@@ -232,6 +235,7 @@ export default class Data {
     ];
     const medianValues = {};
     scoreColumns.forEach((col) => {
+      if (col === 'median_age') console.log(items.map((item) => item[col]));
       medianValues[col] = Helper.medianList(items.map((item) => item[col]));
     });
     items.forEach((item, i) => {

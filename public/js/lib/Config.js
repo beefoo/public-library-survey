@@ -64,20 +64,6 @@ const Config = {
       ],
     },
     {
-      label: 'Median household income (Census)',
-      field: 'income',
-      type: 'range',
-      values: [
-        { minValue: 200000, label: '$200K+' },
-        { minValue: 150000, maxValue: 200000, label: '$150K - $200K' },
-        { minValue: 100000, maxValue: 150000, label: '$100K - $150K' },
-        { minValue: 75000, maxValue: 100000, label: '$75K - $100K' },
-        { minValue: 50000, maxValue: 75000, label: '$50K - $75K' },
-        { minValue: 25000, maxValue: 50000, label: '$25K - $50K' },
-        { minValue: 0, maxValue: 25000, label: 'Under $25K' },
-      ],
-    },
-    {
       label: 'Visits per capita',
       field: 'visits_per_capita_norm',
       type: 'perc_range',
@@ -138,6 +124,20 @@ const Config = {
       ],
     },
     {
+      label: 'Median household income (Census)',
+      field: 'income',
+      type: 'range',
+      values: [
+        { minValue: 200000, label: '$200K+' },
+        { minValue: 150000, maxValue: 200000, label: '$150K - $200K' },
+        { minValue: 100000, maxValue: 150000, label: '$100K - $150K' },
+        { minValue: 75000, maxValue: 100000, label: '$75K - $100K' },
+        { minValue: 50000, maxValue: 75000, label: '$50K - $75K' },
+        { minValue: 25000, maxValue: 50000, label: '$25K - $50K' },
+        { minValue: 0, maxValue: 25000, label: 'Under $25K' },
+      ],
+    },
+    {
       label: 'Percent White (Census)',
       field: 'perc_white',
       type: 'perc_range',
@@ -195,6 +195,29 @@ const Config = {
         { minValue: 10, maxValue: 33, label: '10% to 33%' },
         { minValue: 5, maxValue: 10, label: '5% to 10%' },
         { minValue: 0, maxValue: 5, label: 'Less than 5%' },
+      ],
+    },
+    {
+      label: 'Percent Under 18 (Census)',
+      field: 'perc_minor',
+      type: 'perc_range',
+      values: [
+        { minValue: 50, label: 'Over 50%' },
+        { minValue: 40, maxValue: 50, label: '40% to 50%' },
+        { minValue: 30, maxValue: 40, label: '30% to 40%' },
+        { minValue: 20, maxValue: 30, label: '20% to 30%' },
+        { minValue: 0, maxValue: 20, label: 'Less than 20%' },
+      ],
+    },
+    {
+      label: 'Percent 65 and over (Census)',
+      field: 'perc_senior',
+      type: 'perc_range',
+      values: [
+        { minValue: 30, label: 'Over 30%' },
+        { minValue: 20, maxValue: 30, label: '20% to 30%' },
+        { minValue: 10, maxValue: 20, label: '10% to 20%' },
+        { minValue: 0, maxValue: 10, label: 'Less than 10%' },
       ],
     },
     {
@@ -285,6 +308,15 @@ const Config = {
     {
       field: 'perc_api-desc',
       label: 'Percent Asian/Pacific Islander (high to low)',
+    },
+    {
+      field: 'median_age-asc',
+      label: 'Median age (younger to older)',
+    },
+    ,
+    {
+      field: 'median_age-desc',
+      label: 'Median age (older to younger)',
     },
     {
       field: 'income-desc',
@@ -386,11 +418,22 @@ const Config = {
       maxValue: 100,
     },
     {
+      label: 'Median age <small><em>(Census)</em></small>',
+      field: 'median_age',
+      type: 'quant',
+      minValue: 0,
+      maxValue: 100,
+      labelLeft: 'Younger',
+      labelRight: 'Older',
+    },
+    {
       label: '2020 Presidential Election <small><em>(MIT)</em></small>',
       field: 'vote_points',
       type: 'quant',
       minValue: -100,
       maxValue: 100,
+      labelLeft: 'Dem',
+      labelRight: 'Rep',
     },
   ],
 

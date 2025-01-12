@@ -144,7 +144,33 @@ def get_census_data(path="data/", by="County"):
     print(
         f"Found {ethnicity_df.shape[0]:,} entries from the Census ethnicity (Hispanic or Latino) dataset by {by}"
     )
-    return (income_df, race_df, ethnicity_df)
+
+    age_cols = [
+        "GEO_ID",
+        "S0101_C02_022E",  # Percent under 18 years
+        "S0101_C02_030E",  # Percent 65 years and older
+        "S0101_C01_032E",
+    ]
+    age_df = pd.read_csv(
+        f"{path}ACSST5Y2023.S0101-Data-Age-By-{by}.csv",
+        skiprows=[1],
+        na_values="-",
+        dtype={
+            "S0101_C02_022E": float,
+            "S0101_C02_030E": float,
+            "S0101_C01_032E": float,
+        },
+    )
+    print(
+        f"Found {age_df.shape[0]:,} entries from the Census age and sex dataset by {by}"
+    )
+
+    # Merge on GEO_ID
+    census_df = pd.merge(income_df, race_df, on="GEO_ID", how="left")
+    census_df = pd.merge(census_df, ethnicity_df, on="GEO_ID", how="left")
+    census_df = pd.merge(census_df, age_df[age_cols], on="GEO_ID", how="left")
+
+    return census_df
 
 
 def get_census_value(row, field, census_county, census_zip):
@@ -252,12 +278,8 @@ def group_list(arr, groupBy, sort=False, desc=True):
 
 def merge_data(
     lib_df,
-    income_county_df,
-    race_county_df,
-    ethnicity_county_df,
-    income_zip_df,
-    race_zip_df,
-    ethnicity_zip_df,
+    census_county_df,
+    census_zip_df,
     election_df,
 ):
     # Add Geo ID's to use to merge with Census data
@@ -271,38 +293,34 @@ def merge_data(
         lambda row: f"860Z200US{str(parse_int(row['ZIP'], 0)).zfill(5)}", axis=1
     )
 
-    # Merge census data and create a lookup table on GEO_ID
-    census_county_df = pd.merge(
-        income_county_df, race_county_df, on="GEO_ID", how="left"
-    )
-    census_county_df = pd.merge(
-        census_county_df, ethnicity_county_df, on="GEO_ID", how="left"
-    )
+    # Create lookup tables on GEO_ID
     census_county = dict(
         [(row["GEO_ID"], row) for row in census_county_df.to_records()]
     )
-    census_zip_df = pd.merge(income_zip_df, race_zip_df, on="GEO_ID", how="left")
-    census_zip_df = pd.merge(census_zip_df, ethnicity_zip_df, on="GEO_ID", how="left")
     census_zip = dict([(row["GEO_ID"], row) for row in census_zip_df.to_records()])
 
     # Next, add Census data to lib_df
     census_fields = [
-        "B19013_001E",
-        "B02001_001E",
-        "B02001_002E",
-        "B02001_003E",
-        "B02001_004E",
-        "B02001_005E",
-        "B02001_006E",
-        "B02001_007E",
-        "B03003_002E",
-        "B03003_003E",
+        "B19013_001E",  # Median houshold income
+        "B02001_001E",  # Population
+        "B02001_002E",  # White
+        "B02001_003E",  # Black
+        "B02001_004E",  # Indigenous
+        "B02001_005E",  # Asian
+        "B02001_006E",  # Pacific Islander
+        "B02001_007E",  # Other race
+        "B03003_002E",  # Hispanic/Latino
+        "B03003_003E",  # Not Hispanic/Latino
+        "S0101_C02_022E",  # Percent under 18 years
+        "S0101_C02_030E",  # Percent 65 years and older
+        "S0101_C01_032E",  # Median age
     ]
     for field in census_fields:
         lib_df[field] = lib_df.apply(
             lambda row: get_census_value(row, field, census_county, census_zip),
             axis=1,
         )
+        lib_df[field].fillna(-1, inplace=True)
 
     # Merge the elections data
     lib_df = pd.merge(lib_df, election_df, on="GEO_ID_COUNTY", how="left")

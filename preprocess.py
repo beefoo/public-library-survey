@@ -32,8 +32,8 @@ def main():
     print(f"Found {lib_df.shape[0]:,} entries in {args.libdata}")
 
     # Read the Census data
-    income_county_df, race_county_df, ethnicity_county_df = get_census_data(by="County")
-    income_zip_df, race_zip_df, ethnicity_zip_df = get_census_data(by="Zipcode")
+    census_county_df = get_census_data(by="County")
+    census_zip_df = get_census_data(by="Zipcode")
 
     # Read the elections data
     election_df = get_election_data()
@@ -59,12 +59,8 @@ def main():
     # Merge all the data
     lib_df = merge_data(
         lib_df,
-        income_county_df,
-        race_county_df,
-        ethnicity_county_df,
-        income_zip_df,
-        race_zip_df,
-        ethnicity_zip_df,
+        census_county_df,
+        census_zip_df,
         election_df,
     )
     print(f"Found {lib_df.shape[0]:,} entries after merging")
@@ -76,6 +72,7 @@ def main():
     )
 
     # Calculate per capita values
+    print("Calculating percentages...")
     lib_df = calculate_per(lib_df, "VISITS", "POPU_LSA", "VISITS_PER")
     lib_df = calculate_rank(lib_df, "VISITS_PER", "VISITS_PER_N")
     lib_df = calculate_per(lib_df, "TOTPRO", "POPU_LSA", "PRO_PER")
@@ -180,6 +177,7 @@ def main():
     )
 
     # Take only the data that we need, and rename them
+    print("Outputing results...")
     columns = {
         "LIBID": "id",
         "LIBNAME": "name",
@@ -218,6 +216,9 @@ def main():
         "PERC_POC": "perc_poc",
         "PERC_HISPANIC": "perc_hispanic",
         "PERC_POC_OR_HISPANIC": "perc_poc_or_hispanic",
+        "S0101_C02_022E": "perc_minor",
+        "S0101_C02_030E": "perc_senior",
+        "S0101_C01_032E": "median_age",
         "GEO_URL": "geo_url",
         "VISITS_PER": "visits_per_capita",
         "PRO_PER": "programs_per_capita",
@@ -231,14 +232,6 @@ def main():
         "COMP_PER_N": "computer_per_capita_norm",
         "WIFI_PER_N": "wifi_per_capita_norm",
         "vote_points": "vote_points",
-        # "B02001_001E": "population",
-        # "B02001_002E": "pop_white",
-        # "B02001_003E": "pop_black",
-        # "B02001_004E": "pop_indigenous",
-        # "B02001_005E": "pop_asian",
-        # "B02001_006E": "pop_pacific",
-        # "B02001_007E": "pop_other"
-        # "B03003_002E": "pop_hispanic",
     }
     old_columns = list(columns.keys())
     new_columns = list(columns.values())
