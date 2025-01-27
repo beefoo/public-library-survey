@@ -308,13 +308,14 @@ export default class Data {
       html += `<select id="filter-${field}" name="filter-${field}" data-field="${fieldName}" class="select-filter">`;
       html += '  <option value="all">All</option>';
       values.forEach((v) => {
-        if (v.count < 1) return;
         const value = 'value' in v ? v.value : v.label;
         const selected =
           fieldName in filters && filters[fieldName] === value
             ? 'selected'
             : '';
-        html += `  <option value="${value}" ${selected}>${v.label} (${v.count.toLocaleString()})</option>`;
+        html += `  <option value="${value}" ${selected}>${v.label}`;
+        if (v.count > 0) html += `(${v.count.toLocaleString()})`;
+        html += '</option>';
       });
       html += '</select>';
     });
