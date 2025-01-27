@@ -64,6 +64,17 @@ const Config = {
       ],
     },
     {
+      label: 'Staff size',
+      field: 'staff',
+      type: 'range',
+      values: [
+        { minValue: 100, label: '100+' },
+        { minValue: 25, maxValue: 100, label: '25 - 100' },
+        { minValue: 10, maxValue: 25, label: '10 - 25' },
+        { minValue: 0, maxValue: 10, label: 'Under 10' },
+      ],
+    },
+    {
       label: 'Visits per capita',
       field: 'visits_per_capita_norm',
       type: 'perc_range',
@@ -286,6 +297,14 @@ const Config = {
       label: 'Op revenue per capita (low to high)',
     },
     {
+      field: 'staff-desc',
+      label: 'Staff size (high to low)',
+    },
+    {
+      field: 'staff-asc',
+      label: 'Staff size (low to high)',
+    },
+    {
       field: 'perc_white-desc',
       label: 'Percent White (high to low)',
     },
@@ -373,6 +392,12 @@ const Config = {
     {
       label: 'Wifi sessions per capita',
       field: 'wifi_per_capita_norm',
+      type: 'quant',
+      minValue: 0,
+    },
+    {
+      label: 'Staff size',
+      field: 'staff',
       type: 'quant',
       minValue: 0,
     },
