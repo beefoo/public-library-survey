@@ -31,6 +31,12 @@ export default class Helper {
     return arr.reduce((a, b) => Math.max(a, b), -Infinity);
   }
 
+  static meanList(values) {
+    if (values.length === 0) return 0;
+    const n = values.length;
+    return values.reduce((a, b) => a + b) / n;
+  }
+
   static medianList(values) {
     if (values.length === 0) return 0;
 
@@ -121,6 +127,17 @@ export default class Helper {
 
   static roundToNearest(value, nearest) {
     return Math.round(value / nearest) * nearest;
+  }
+
+  static stdList(values, calculatedMean = false) {
+    if (values.length <= 0) return 0;
+    const n = values.length;
+    const mean = calculatedMean
+      ? calculatedMean
+      : values.reduce((a, b) => a + b) / n;
+    return Math.sqrt(
+      values.map((x) => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n,
+    );
   }
 
   static sum(arr, key = false) {
