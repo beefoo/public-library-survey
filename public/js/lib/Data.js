@@ -234,16 +234,20 @@ export default class Data {
       'wifi_per_capita',
       'staff_per_capita',
     ];
-    const medianValues = {};
+    const meanValues = {};
+    const stdValues = {};
     scoreColumns.forEach((col) => {
-      medianValues[col] = Helper.medianList(items.map((item) => item[col]));
+      meanValues[col] = Helper.meanList(items.map((item) => item[col]));
+      stdValues[col] = Helper.stdList(
+        items.map((item) => item[col]),
+        meanValues[col],
+      );
     });
+    console.log(stdValues);
     items.forEach((item, i) => {
       scoreColumns.forEach((col) => {
-        items[i][`${col}_score`] = Data.toPlusMinus(
-          item[col] - medianValues[col],
-          2,
-        );
+        const delta = item[col] - meanValues[col];
+        items[i][`${col}_score`] = Data.toPlusMinus(delta, stdValues[col], 2);
       });
     });
 
@@ -373,10 +377,17 @@ export default class Data {
     $results.scrollTop = 0;
   }
 
-  static toPlusMinus(value, precision = 3) {
+  static toPlusMinus(value, std, precision = 3) {
+    const symbol = value > 0 ? '↑' : '↓';
+    const valueString = parseFloat(
+      Math.abs(value).toFixed(precision),
+    ).toLocaleString();
+    const stds = Math.ceil(Math.abs(value) / std);
     let string = '';
-    if (value > 0) string += '+';
-    string += parseFloat(value.toFixed(precision)).toLocaleString();
+    for (let i = 0; i < stds; i += 1) {
+      string += symbol;
+    }
+    string += ` ${valueString}`;
     return string;
   }
 }
