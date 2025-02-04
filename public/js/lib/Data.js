@@ -234,19 +234,15 @@ export default class Data {
       'wifi_per_capita',
       'staff_per_capita',
     ];
-    const meanValues = {};
+    const medianValues = {};
     const stdValues = {};
     scoreColumns.forEach((col) => {
-      meanValues[col] = Helper.meanList(items.map((item) => item[col]));
-      stdValues[col] = Helper.stdList(
-        items.map((item) => item[col]),
-        meanValues[col],
-      );
+      medianValues[col] = Helper.medianList(items.map((item) => item[col]));
+      stdValues[col] = Helper.stdList(items.map((item) => item[col]));
     });
-    console.log(stdValues);
     items.forEach((item, i) => {
       scoreColumns.forEach((col) => {
-        const delta = item[col] - meanValues[col];
+        const delta = item[col] - medianValues[col];
         items[i][`${col}_score`] = Data.toPlusMinus(delta, stdValues[col], 2);
       });
     });
