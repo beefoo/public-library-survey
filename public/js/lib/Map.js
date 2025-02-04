@@ -282,7 +282,7 @@ export default class Map {
     html += `  <dd>65 and older: ${item.perc_senior}% (${item.perc_senior_score}%)</dd>`;
     html += '</dl>';
     html += '<dl>';
-    html += `  <dt>Staff</dt><dd>${item.staff.toLocaleString()} (${item.librarians.toLocaleString()} librarians)</dd>`;
+    html += `  <dt>Staff</dt><dd>${item.staff.toLocaleString()} (${item.librarians.toLocaleString()} librarians) / ${item.staff_per_capita.toLocaleString()} per 1000 people (${item.staff_per_capita_score})</dd>`;
     html += `  <dt>Revenue (operating)</dt><dd>$${item.op_revenue.toLocaleString()} / $${item.op_revenue_per_capita.toLocaleString()} per capita (${item.op_revenue_per_capita_score})</dd>`;
     html += `  <dt>Revenue (capital)</dt><dd>$${item.cap_revenue.toLocaleString()}</dd>`;
     html += `  <dt>Items</dt><dd>${item.tot_phys_items.toLocaleString()} physical / ${item.tot_e_items.toLocaleString()} electronic</dd>`;

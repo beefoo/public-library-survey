@@ -232,6 +232,7 @@ export default class Data {
       'onsite_attendance_per_program',
       'computer_per_capita',
       'wifi_per_capita',
+      'staff_per_capita',
     ];
     const medianValues = {};
     scoreColumns.forEach((col) => {

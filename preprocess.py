@@ -84,6 +84,7 @@ def main():
     lib_df = calculate_per(lib_df, "WIFISESS", "POPU_LSA", "WIFI_PER")
     lib_df = calculate_rank(lib_df, "WIFI_PER", "WIFI_PER_N")
     lib_df = calculate_per(lib_df, "TOTINCM", "POPU_LSA", "INCM_PER")
+    lib_df = calculate_per(lib_df, "TOTSTAFF", "POPU_LSA", "STAFF_PER", 3, 1000)
 
     # # Parse census tract description
     # income_df["CENSUS_TRACT_DESCRIPTION"] = income_df.apply(
@@ -226,6 +227,7 @@ def main():
         "COMP_PER": "computer_per_capita",
         "WIFI_PER": "wifi_per_capita",
         "INCM_PER": "op_revenue_per_capita",
+        "STAFF_PER": "staff_per_capita",
         "VISITS_PER_N": "visits_per_capita_norm",
         "PRO_PER_N": "programs_per_capita_norm",
         "ATTEN_PER_N": "attendance_per_program_norm",

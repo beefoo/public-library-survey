@@ -4,11 +4,11 @@ import pandas as pd
 from tqdm import tqdm
 
 
-def calculate_per(df, value_key, total_key, new_key):
+def calculate_per(df, value_key, total_key, new_key, precision=3, multiplier=1):
     curve = 1.0
     df[new_key] = df.apply(
         lambda row: (
-            round(pow(row[value_key] / row[total_key], curve), 3)
+            round(pow(row[value_key] / row[total_key], curve) * multiplier, precision)
             if row[total_key] > 0 and row[value_key] > 0
             else 0
         ),
