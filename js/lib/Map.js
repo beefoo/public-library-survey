@@ -252,22 +252,18 @@ export default class Map {
   }
 
   renderDetails(item) {
-    const localeTypeFilter = Helper.where(
-      Config.filterBy,
-      'field',
-      'locale_type',
-    );
     const localeType = Helper.where(
       Config.localeTypes,
       'value',
       item.locale_type,
     );
+    const region = Helper.where(Config.regions, 'value', item.region);
     const electionString = this.constructor.getElectionString(item);
     let html = '';
     html += '<dl>';
     html += `  <dt>Address</dt><dd><a href="${item.geo_url}" target="_blank">${item.address}, ${item.city}, ${item.state}</a></dd>`;
     html += `  <dt>Service area population</dt><dd>${item.pop_lsa.toLocaleString()}</dd>`;
-    html += `  <dt>Locale type</dt><dd>${localeType.label}</dd>`;
+    html += `  <dt>Locale type</dt><dd>${localeType.label}, ${region.label}</dd>`;
     html += `  <dt>2020 Pres Election (MIT)</dt><dd>${electionString}</dd>`;
     html += `  <dt>Median household income (Census)</dt><dd>$${item.income.toLocaleString()} (${item.income_score.toLocaleString()})</dd>`;
     html += `  <dt>Demographics (Census)</dt>`;
